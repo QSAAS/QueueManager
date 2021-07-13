@@ -12,6 +12,8 @@ import ActiveQueueServer from "@app/Command/Domain/Entity/ActiveQueueServer";
 import ServerOperatorNotAllowedToAccessServer from "@app/Command/Domain/Error/ServerOperatorNotAllowedToAccessServer";
 import QueueServerBecameFree from "@app/Command/Domain/Event/QueueServerBecameFree";
 import ReservationCompleted from "@app/Command/Domain/Event/ReservationCompleted";
+import QueueServerBecameBusy from "@app/Command/Domain/Event/QueueServerBecameBusy";
+import ReservationStartedProcessing from "@app/Command/Domain/Event/ReservationStartedProcessing";
 
 export default class QueueServerOperator extends AggregateRoot {
   constructor(private id: QueueServerOperatorId,
@@ -31,23 +33,15 @@ export default class QueueServerOperator extends AggregateRoot {
   }
 
   public deactivate(queueServer: QueueServer) {
-    if (!this.hasAssignedQueueServer(queueServer))
-      throw new ServerOperatorNotAllowedToAccessServer();
-    const activeServer = this.activeQueueServers.find(activeServer => activeServer.getId().equals(queueServer.getId()))
-    if (!activeServer)
-      throw new QueueServerIsInactive();
-    this.activeQueueServers.filter(other => !other.getId().equals(queueServer.getId()));
+    const activeServer = this.getActiveServer(queueServer);
     const completeReservation = activeServer.completeReservation();
+    this.activeQueueServers.filter(other => !other.getId().equals(queueServer.getId()));
     this.raiseEvent(new ReservationCompleted(completeReservation));
     this.raiseEvent(new QueueServerDeactivated(queueServer));
   }
 
   public markAsFree(queueServer: QueueServer) {
-    if (!this.hasAssignedQueueServer(queueServer))
-      throw new ServerOperatorNotAllowedToAccessServer();
-    const activeServer = this.activeQueueServers.find(activeServer => activeServer.getId().equals(queueServer.getId()))
-    if (!activeServer)
-      throw new QueueServerIsInactive();
+    const activeServer = this.getActiveServer(queueServer)
     const completeReservation = activeServer.completeReservation();
     this.raiseEvent(new ReservationCompleted(completeReservation));
     this.raiseEvent(new QueueServerBecameFree(queueServer));
@@ -55,6 +49,10 @@ export default class QueueServerOperator extends AggregateRoot {
 
   public startProcessingReservation(queueServer: QueueServer,
                                     activeReservation: ActiveReservation) {
+    const activeServer = this.getActiveServer(queueServer);
+    activeServer.assign(activeReservation);
+    this.raiseEvent(new QueueServerBecameBusy(queueServer));
+    this.raiseEvent(new ReservationStartedProcessing(activeReservation));
   }
 
   private hasActiveQueueServer(queueServer: QueueServer): boolean {
@@ -63,5 +61,14 @@ export default class QueueServerOperator extends AggregateRoot {
 
   private hasAssignedQueueServer(queueServer: QueueServer) {
     return this.assignedQueueServerIds.find(id => id.equals(queueServer.getId())) !== undefined;
+  }
+
+  private getActiveServer(queueServer: QueueServer): ActiveQueueServer {
+    if (!this.hasAssignedQueueServer(queueServer))
+      throw new ServerOperatorNotAllowedToAccessServer();
+    const activeServer = this.activeQueueServers.find(activeServer => activeServer.getId().equals(queueServer.getId()));
+    if (!activeServer)
+      throw new QueueServerIsInactive();
+    return activeServer;
   }
 }
