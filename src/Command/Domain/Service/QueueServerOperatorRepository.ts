@@ -8,4 +8,5 @@ export default interface QueueServerOperatorRepository {
   getOperatorByReservation(id: ReservationId): Promise<QueueServerOperator>;
   getOperatorByQueueServer(id: QueueServerId): Promise<QueueServerOperator>;
   save(queueServerOperator: QueueServerOperator): Promise<void>;
+  update(queueServerOperator: QueueServerOperator): Promise<void>;
 }

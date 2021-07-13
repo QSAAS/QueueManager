@@ -18,5 +18,6 @@ export default class ChangeQueueServerStatusService {
       operator.activate(server);
     else
       operator.deactivate(server);
+    await this.queueServerOperatorRepository.update(operator);
   }
 }
