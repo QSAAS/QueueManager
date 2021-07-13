@@ -16,4 +16,8 @@ export default class ActiveReservation extends AggregateRoot {
               private metadata: Metadata) {
     super();
   }
+
+  public getId(): ReservationId {
+    return this.reservationId;
+  }
 }
