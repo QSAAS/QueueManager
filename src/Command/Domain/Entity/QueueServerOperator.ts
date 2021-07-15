@@ -23,6 +23,22 @@ export default class QueueServerOperator extends AggregateRoot {
     super();
   }
 
+  public getId(): QueueServerOperatorId {
+    return this.id;
+  }
+
+  public getAssignedQueueServerIds(): QueueServerId[] {
+    return this.assignedQueueServerIds;
+  }
+
+  public getAssignedQueueNodeIds(): QueueNodeId[] {
+    return this.assignedQueueNodeIds;
+  }
+
+  public getActiveQueueServers(): ActiveQueueServer[] {
+    return this.activeQueueServers;
+  }
+
   public activate(queueServer: QueueServer) {
     if (!this.hasAssignedQueueServer(queueServer))
       throw new ServerOperatorNotAllowedToAccessServer();

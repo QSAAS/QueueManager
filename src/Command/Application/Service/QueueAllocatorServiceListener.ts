@@ -6,7 +6,7 @@ import QueueServerRepository from "@app/Command/Domain/Service/QueueServerReposi
 import QueueServer from "@app/Command/Domain/Entity/QueueServer";
 import NextActiveReservationNotFoundForQueueServer
   from "@app/Command/Domain/Error/NextActiveReservationNotFoundForQueueServer";
-import OperatorNotFoundForServer from "@app/Command/Domain/Error/OperatorNotFoundForServer";
+import QueueServerOperatorNotFoundForServer from "@app/Command/Domain/Error/QueueServerOperatorNotFoundForServer";
 
 export default class QueueAllocatorServiceListener {
   constructor(private queueServerOperatorRepository: QueueServerOperatorRepository,
@@ -26,7 +26,7 @@ export default class QueueAllocatorServiceListener {
       operator.startProcessingReservation(server, activeReservation);
       await this.queueServerOperatorRepository.update(operator);
     } catch (e) {
-      if (!(e instanceof NextActiveReservationNotFoundForQueueServer || e instanceof OperatorNotFoundForServer))
+      if (!(e instanceof NextActiveReservationNotFoundForQueueServer || e instanceof QueueServerOperatorNotFoundForServer))
         throw e;
     }
   }

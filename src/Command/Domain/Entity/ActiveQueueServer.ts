@@ -19,6 +19,10 @@ export default class ActiveQueueServer {
     return this.id;
   }
 
+  public getReservation(): InServiceReservation | null {
+    return this.reservation;
+  }
+
   public completeReservation(): CompleteReservation {
     if (this.reservation === null)
       throw new ActiveQueueServerIsFree();
