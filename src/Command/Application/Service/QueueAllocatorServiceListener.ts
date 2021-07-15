@@ -23,6 +23,7 @@ export default class QueueAllocatorServiceListener {
     try {
       const activeReservation = await this.queueServerAllocatorService.getNextActiveReservation(server);
       const operator = await this.queueServerOperatorRepository.getOperatorByQueueServer(server.getId());
+      // TODO: Ask weso, sure that we don't delete the just-assigned active reservation here?
       operator.startProcessingReservation(server, activeReservation);
       await this.queueServerOperatorRepository.update(operator);
     } catch (e) {
