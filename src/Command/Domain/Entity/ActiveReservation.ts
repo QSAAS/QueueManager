@@ -7,14 +7,16 @@ import QueueNumber from "@app/Command/Domain/ValueObject/QueueNumber";
 import Metadata from "@app/Command/Domain/ValueObject/Metadata";
 
 export default class ActiveReservation extends AggregateRoot {
-  constructor(private reservationId: ReservationId,
-              private clientId: ClientId,
-              private queueNodeId: QueueNodeId,
-              private reservationTime: Date,
-              private verificationNumber: VerificationNumber,
-              private numberInQueue: QueueNumber,
-              // TODO: metadata
-              private metadata: Metadata) {
+  constructor(
+    private reservationId: ReservationId,
+    private clientId: ClientId,
+    private queueNodeId: QueueNodeId,
+    private reservationTime: Date,
+    private verificationNumber: VerificationNumber,
+    private numberInQueue: QueueNumber,
+    // TODO: metadata
+    private metadata: Metadata,
+  ) {
     super();
   }
 

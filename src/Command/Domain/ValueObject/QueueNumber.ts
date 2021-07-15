@@ -2,7 +2,7 @@ import ValueObject from "@app/Command/Domain/ValueObject/ValueObject";
 
 export default class QueueNumber extends ValueObject {
   constructor(private queueNumber: string) {
-    super()
+    super();
   }
 
   static from(num: string): QueueNumber {
@@ -25,5 +25,4 @@ export default class QueueNumber extends ValueObject {
   equals(other: this): boolean {
     return this.queueNumber === other.getQueueNumber();
   }
-
 }

@@ -1,4 +1,4 @@
-import {Schema} from "mongoose";
+import { Schema } from "mongoose";
 import MetadataSchema from "@app/Command/Infrastructure/Mongoose/Schema/MetadataSchema";
 
 const ActiveReservationSchema = new Schema({

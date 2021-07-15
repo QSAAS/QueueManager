@@ -2,7 +2,7 @@ import ValueObject from "@app/Command/Domain/ValueObject/ValueObject";
 
 export default class VerificationNumber extends ValueObject {
   constructor(private verificationNumber: string) {
-    super()
+    super();
   }
 
   static from(num: string): VerificationNumber {
@@ -25,5 +25,4 @@ export default class VerificationNumber extends ValueObject {
   equals(other: this): boolean {
     return this.verificationNumber === other.getVerificationNumber();
   }
-
 }

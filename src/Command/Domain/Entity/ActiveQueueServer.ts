@@ -6,12 +6,10 @@ import ActiveReservation from "@app/Command/Domain/Entity/ActiveReservation";
 import CompleteReservation from "@app/Command/Domain/Entity/CompleteReservation";
 
 export default class ActiveQueueServer {
-  constructor(private id: QueueServerId,
-              private reservation: InServiceReservation | null) {}
+  constructor(private id: QueueServerId, private reservation: InServiceReservation | null) {}
 
   public assign(reservation: ActiveReservation): void {
-    if (this.reservation !== null)
-      throw new ActiveQueueServerIsBusy();
+    if (this.reservation !== null) throw new ActiveQueueServerIsBusy();
     this.reservation = new InServiceReservation(reservation.getId(), new Date());
   }
 
@@ -24,11 +22,12 @@ export default class ActiveQueueServer {
   }
 
   public completeReservation(): CompleteReservation {
-    if (this.reservation === null)
-      throw new ActiveQueueServerIsFree();
-    const completeReservation = new CompleteReservation(this.reservation.getId(),
+    if (this.reservation === null) throw new ActiveQueueServerIsFree();
+    const completeReservation = new CompleteReservation(
+      this.reservation.getId(),
       this.reservation.getServiceStartTime(),
-      new Date());
+      new Date(),
+    );
     this.reservation = null;
     return completeReservation;
   }

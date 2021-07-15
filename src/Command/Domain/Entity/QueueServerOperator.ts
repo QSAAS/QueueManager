@@ -16,10 +16,12 @@ import QueueServerBecameBusy from "@app/Command/Domain/Event/QueueServerBecameBu
 import ReservationStartedProcessing from "@app/Command/Domain/Event/ReservationStartedProcessing";
 
 export default class QueueServerOperator extends AggregateRoot {
-  constructor(private id: QueueServerOperatorId,
-              private assignedQueueServerIds: QueueServerId[],
-              private assignedQueueNodeIds: QueueNodeId[],
-              private activeQueueServers: ActiveQueueServer[]) {
+  constructor(
+    private id: QueueServerOperatorId,
+    private assignedQueueServerIds: QueueServerId[],
+    private assignedQueueNodeIds: QueueNodeId[],
+    private activeQueueServers: ActiveQueueServer[],
+  ) {
     super();
   }
 
@@ -40,10 +42,8 @@ export default class QueueServerOperator extends AggregateRoot {
   }
 
   public activate(queueServer: QueueServer) {
-    if (!this.hasAssignedQueueServer(queueServer))
-      throw new ServerOperatorNotAllowedToAccessServer();
-    if (this.hasActiveQueueServer(queueServer))
-      throw new QueueServerIsActive();
+    if (!this.hasAssignedQueueServer(queueServer)) throw new ServerOperatorNotAllowedToAccessServer();
+    if (this.hasActiveQueueServer(queueServer)) throw new QueueServerIsActive();
     this.activeQueueServers.push(new ActiveQueueServer(queueServer.getId(), null));
     this.raiseEvent(new QueueServerActivated(queueServer));
   }
@@ -51,20 +51,19 @@ export default class QueueServerOperator extends AggregateRoot {
   public deactivate(queueServer: QueueServer) {
     const activeServer = this.getActiveServer(queueServer);
     const completeReservation = activeServer.completeReservation();
-    this.activeQueueServers.filter(other => !other.getId().equals(queueServer.getId()));
+    this.activeQueueServers.filter((other) => !other.getId().equals(queueServer.getId()));
     this.raiseEvent(new ReservationCompleted(completeReservation));
     this.raiseEvent(new QueueServerDeactivated(queueServer));
   }
 
   public markAsFree(queueServer: QueueServer) {
-    const activeServer = this.getActiveServer(queueServer)
+    const activeServer = this.getActiveServer(queueServer);
     const completeReservation = activeServer.completeReservation();
     this.raiseEvent(new ReservationCompleted(completeReservation));
     this.raiseEvent(new QueueServerBecameFree(queueServer));
   }
 
-  public startProcessingReservation(queueServer: QueueServer,
-                                    activeReservation: ActiveReservation) {
+  public startProcessingReservation(queueServer: QueueServer, activeReservation: ActiveReservation) {
     const activeServer = this.getActiveServer(queueServer);
     activeServer.assign(activeReservation);
     this.raiseEvent(new QueueServerBecameBusy(queueServer));
@@ -72,19 +71,17 @@ export default class QueueServerOperator extends AggregateRoot {
   }
 
   private hasActiveQueueServer(queueServer: QueueServer): boolean {
-    return this.activeQueueServers.find(other => other.getId().equals(queueServer.getId())) !== undefined;
+    return this.activeQueueServers.find((other) => other.getId().equals(queueServer.getId())) !== undefined;
   }
 
   private hasAssignedQueueServer(queueServer: QueueServer) {
-    return this.assignedQueueServerIds.find(id => id.equals(queueServer.getId())) !== undefined;
+    return this.assignedQueueServerIds.find((id) => id.equals(queueServer.getId())) !== undefined;
   }
 
   private getActiveServer(queueServer: QueueServer): ActiveQueueServer {
-    if (!this.hasAssignedQueueServer(queueServer))
-      throw new ServerOperatorNotAllowedToAccessServer();
-    const activeServer = this.activeQueueServers.find(server => server.getId().equals(queueServer.getId()));
-    if (!activeServer)
-      throw new QueueServerIsInactive();
+    if (!this.hasAssignedQueueServer(queueServer)) throw new ServerOperatorNotAllowedToAccessServer();
+    const activeServer = this.activeQueueServers.find((server) => server.getId().equals(queueServer.getId()));
+    if (!activeServer) throw new QueueServerIsInactive();
     return activeServer;
   }
 }

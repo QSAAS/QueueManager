@@ -1,4 +1,2 @@
 // TODO: Implement
-export default interface IMetadata {
-
-}
+export default interface IMetadata {}

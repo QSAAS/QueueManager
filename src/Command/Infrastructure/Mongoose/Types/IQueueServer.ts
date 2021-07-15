@@ -1,4 +1,4 @@
 export default interface IQueueServer {
-  id: string,
-  assignedQueueNodeIds: string[],
+  id: string;
+  assignedQueueNodeIds: string[];
 }

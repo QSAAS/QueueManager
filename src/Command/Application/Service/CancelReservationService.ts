@@ -4,8 +4,7 @@ import ClientId from "@app/Command/Domain/ValueObject/ClientId";
 import ReservationId from "@app/Command/Domain/ValueObject/ReservationId";
 
 export default class CancelReservationService {
-  constructor(private cancelService: ClientCancelReservationService) {
-  }
+  constructor(private cancelService: ClientCancelReservationService) {}
 
   public async execute(request: CancelReservationRequest): Promise<void> {
     const clientId = ClientId.from(request.clientId);

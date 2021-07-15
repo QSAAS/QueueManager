@@ -9,9 +9,9 @@ import QueueNumber from "@app/Command/Domain/ValueObject/QueueNumber";
 import MetadataMongooseTransformer from "@app/Command/Infrastructure/Mongoose/Transformer/MetadataMongooseTransformer";
 
 export default class ActiveReservationMongooseTransformer
-  implements GenericTransformer<IActiveReservation, ActiveReservation> {
-  constructor(private metadataMongooseTransformer: MetadataMongooseTransformer) {
-  }
+  implements GenericTransformer<IActiveReservation, ActiveReservation>
+{
+  constructor(private metadataMongooseTransformer: MetadataMongooseTransformer) {}
 
   domainInstanceFrom(object: IActiveReservation): ActiveReservation {
     return new ActiveReservation(
@@ -21,7 +21,8 @@ export default class ActiveReservationMongooseTransformer
       new Date(object.reservationTime),
       VerificationNumber.from(object.verificationNumber),
       QueueNumber.from(object.numberInQueue),
-      this.metadataMongooseTransformer.domainInstanceFrom(object.metadata));
+      this.metadataMongooseTransformer.domainInstanceFrom(object.metadata),
+    );
   }
 
   mongooseObjectFrom(instance: ActiveReservation): IActiveReservation {
@@ -35,5 +36,4 @@ export default class ActiveReservationMongooseTransformer
       metadata: this.metadataMongooseTransformer.mongooseObjectFrom(instance.getMetadata()),
     };
   }
-
 }

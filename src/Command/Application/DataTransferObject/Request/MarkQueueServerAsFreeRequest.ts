@@ -1,5 +1,3 @@
 export default class MarkQueueServerAsFreeRequest {
-  constructor(public queueServerOperatorId: string,
-              public queueServerId: string) {}
-
+  constructor(public queueServerOperatorId: string, public queueServerId: string) {}
 }

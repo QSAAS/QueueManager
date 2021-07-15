@@ -10,13 +10,14 @@ import AggregateRoot from "@app/Command/Domain/Entity/AggregateRoot";
 import ReservationCancelled from "@app/Command/Domain/Event/ReservationCancelled";
 
 export default class ClientCancelReservationService extends AggregateRoot {
-  constructor(private queueServerOperatorRepository: QueueServerOperatorRepository,
-              private activeReservationRepository: ActiveReservationRepository) {
+  constructor(
+    private queueServerOperatorRepository: QueueServerOperatorRepository,
+    private activeReservationRepository: ActiveReservationRepository,
+  ) {
     super();
   }
 
-  public async execute(clientId: ClientId,
-                       reservationId: ReservationId): Promise<void> {
+  public async execute(clientId: ClientId, reservationId: ReservationId): Promise<void> {
     let reservation: ActiveReservation;
     try {
       reservation = await this.activeReservationRepository.getById(reservationId);
@@ -24,15 +25,13 @@ export default class ClientCancelReservationService extends AggregateRoot {
       throw new ReservationNotCancellable();
     }
 
-    if (!reservation.getClientId().equals(clientId))
-      throw new ClientNotAuthorizedToCancelReservation();
+    if (!reservation.getClientId().equals(clientId)) throw new ClientNotAuthorizedToCancelReservation();
 
     try {
       await this.queueServerOperatorRepository.getOperatorByReservation(reservationId);
       throw new ReservationNotCancellable();
-    } catch(e) {
-      if (e instanceof ReservationNotCancellable)
-        throw e;
+    } catch (e) {
+      if (e instanceof ReservationNotCancellable) throw e;
       const cancelledReservation = new CancelledReservation(reservationId, new Date());
       this.raiseEvent(new ReservationCancelled(cancelledReservation));
       await this.activeReservationRepository.delete(reservation);

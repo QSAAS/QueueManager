@@ -4,15 +4,15 @@ import QueueServerAllocatorService from "@app/Command/Domain/Service/QueueServer
 import NewReservationCreated from "@app/Command/Domain/Event/NewReservationCreated";
 import QueueServerRepository from "@app/Command/Domain/Service/QueueServerRepository";
 import QueueServer from "@app/Command/Domain/Entity/QueueServer";
-import NextActiveReservationNotFoundForQueueServer
-  from "@app/Command/Domain/Error/NextActiveReservationNotFoundForQueueServer";
+import NextActiveReservationNotFoundForQueueServer from "@app/Command/Domain/Error/NextActiveReservationNotFoundForQueueServer";
 import QueueServerOperatorNotFoundForServer from "@app/Command/Domain/Error/QueueServerOperatorNotFoundForServer";
 
 export default class QueueAllocatorServiceListener {
-  constructor(private queueServerOperatorRepository: QueueServerOperatorRepository,
-              private queueServerAllocatorService: QueueServerAllocatorService,
-              private queueServerRepository: QueueServerRepository) {
-  }
+  constructor(
+    private queueServerOperatorRepository: QueueServerOperatorRepository,
+    private queueServerAllocatorService: QueueServerAllocatorService,
+    private queueServerRepository: QueueServerRepository,
+  ) {}
 
   public async executeBecauseServerBecameFree(event: QueueServerBecameFree): Promise<void> {
     const server = event.getQueueServer();
@@ -27,7 +27,9 @@ export default class QueueAllocatorServiceListener {
       operator.startProcessingReservation(server, activeReservation);
       await this.queueServerOperatorRepository.update(operator);
     } catch (e) {
-      if (!(e instanceof NextActiveReservationNotFoundForQueueServer || e instanceof QueueServerOperatorNotFoundForServer))
+      if (
+        !(e instanceof NextActiveReservationNotFoundForQueueServer || e instanceof QueueServerOperatorNotFoundForServer)
+      )
         throw e;
     }
   }
@@ -35,6 +37,6 @@ export default class QueueAllocatorServiceListener {
   public async executeBecauseNewReservationCreated(event: NewReservationCreated) {
     const activeReservation = event.getActiveReservation();
     const servers = await this.queueServerRepository.getByQueueNode(activeReservation.getQueueNodeId());
-    servers.map(server => this.assignReservationToServer(server));
+    servers.map((server) => this.assignReservationToServer(server));
   }
 }

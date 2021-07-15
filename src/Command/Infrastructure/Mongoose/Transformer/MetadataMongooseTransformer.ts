@@ -11,5 +11,4 @@ export default class MetadataMongooseTransformer implements GenericTransformer<I
   mongooseObjectFrom(instance: Metadata): IMetadata {
     return {};
   }
-
 }

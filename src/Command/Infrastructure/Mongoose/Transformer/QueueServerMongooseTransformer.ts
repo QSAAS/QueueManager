@@ -8,17 +8,14 @@ export default class QueueServerMongooseTransformer implements GenericTransforme
   domainInstanceFrom(object: IQueueServer): QueueServer {
     return new QueueServer(
       QueueServerId.from(object.id),
-      object.assignedQueueNodeIds.map(id => QueueNodeId.from(id))
+      object.assignedQueueNodeIds.map((id) => QueueNodeId.from(id)),
     );
   }
 
   mongooseObjectFrom(instance: QueueServer): IQueueServer {
     return {
       id: instance.getId().toString(),
-      assignedQueueNodeIds: instance
-        .getAssignedQueueNodeIds()
-        .map(id => id.toString())
+      assignedQueueNodeIds: instance.getAssignedQueueNodeIds().map((id) => id.toString()),
     };
   }
-
 }

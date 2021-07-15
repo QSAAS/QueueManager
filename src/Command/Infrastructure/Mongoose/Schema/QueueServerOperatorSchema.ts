@@ -1,4 +1,4 @@
-import {Schema} from "mongoose";
+import { Schema } from "mongoose";
 import ActiveQueueServerSchema from "@app/Command/Infrastructure/Mongoose/Schema/ActiveQueueServerSchema";
 
 const QueueServerOperatorSchema = new Schema({
