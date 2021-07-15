@@ -10,9 +10,9 @@ export default class MarkQueueServerAsFreeService {
               private queueServerRepository: QueueServerRepository) {}
 
   public async execute(request: MarkQueueServerAsFreeRequest): Promise<void> {
-    const operatorId = new QueueServerOperatorId(request.queueServerOperatorId);
+    const operatorId = QueueServerOperatorId.from(request.queueServerOperatorId);
     const operator = await this.queueServerOperatorRepository.getById(operatorId);
-    const serverId = new QueueServerId(request.queueServerId);
+    const serverId = QueueServerId.from(request.queueServerId);
     const server = await this.queueServerRepository.getById(serverId);
     operator.markAsFree(server);
     await this.queueServerOperatorRepository.update(operator);

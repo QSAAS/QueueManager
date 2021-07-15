@@ -8,8 +8,8 @@ export default class CancelReservationService {
   }
 
   public async execute(request: CancelReservationRequest): Promise<void> {
-    const clientId = new ClientId(request.clientId);
-    const reservationId = new ReservationId(request.reservationId);
+    const clientId = ClientId.from(request.clientId);
+    const reservationId = ReservationId.from(request.reservationId);
     await this.cancelService.execute(clientId, reservationId);
   }
 }

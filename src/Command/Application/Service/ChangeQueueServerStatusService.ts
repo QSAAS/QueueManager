@@ -10,9 +10,9 @@ export default class ChangeQueueServerStatusService {
               private queueServerRepository: QueueServerRepository) {}
 
   public async execute(request: ChangeQueueServerStatusRequest): Promise<void> {
-    const operatorId = new QueueServerOperatorId(request.serverOperatorId);
+    const operatorId = QueueServerOperatorId.from(request.serverOperatorId);
     const operator = await this.queueServerOperatorRepository.getById(operatorId);
-    const serverId = new QueueServerId(request.serverId);
+    const serverId = QueueServerId.from(request.serverId);
     const server = await this.queueServerRepository.getById(serverId);
     if (request.setAsActive)
       operator.activate(server);
