@@ -66,7 +66,7 @@ export default class QueueServerOperator extends AggregateRoot {
   private getActiveServer(queueServer: QueueServer): ActiveQueueServer {
     if (!this.hasAssignedQueueServer(queueServer))
       throw new ServerOperatorNotAllowedToAccessServer();
-    const activeServer = this.activeQueueServers.find(activeServer => activeServer.getId().equals(queueServer.getId()));
+    const activeServer = this.activeQueueServers.find(server => server.getId().equals(queueServer.getId()));
     if (!activeServer)
       throw new QueueServerIsInactive();
     return activeServer;

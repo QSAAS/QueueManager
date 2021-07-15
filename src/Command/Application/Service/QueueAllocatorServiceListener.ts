@@ -4,6 +4,9 @@ import QueueServerAllocatorService from "@app/Command/Domain/Service/QueueServer
 import NewReservationCreated from "@app/Command/Domain/Event/NewReservationCreated";
 import QueueServerRepository from "@app/Command/Domain/Service/QueueServerRepository";
 import QueueServer from "@app/Command/Domain/Entity/QueueServer";
+import NextActiveReservationNotFoundForQueueServer
+  from "@app/Command/Domain/Error/NextActiveReservationNotFoundForQueueServer";
+import OperatorNotFoundForServer from "@app/Command/Domain/Error/OperatorNotFoundForServer";
 
 export default class QueueAllocatorServiceListener {
   constructor(private queueServerOperatorRepository: QueueServerOperatorRepository,
@@ -23,12 +26,14 @@ export default class QueueAllocatorServiceListener {
       operator.startProcessingReservation(server, activeReservation);
       await this.queueServerOperatorRepository.update(operator);
     } catch (e) {
+      if (!(e instanceof NextActiveReservationNotFoundForQueueServer || e instanceof OperatorNotFoundForServer))
+        throw e;
     }
   }
 
   public async executeBecauseNewReservationCreated(event: NewReservationCreated) {
     const activeReservation = event.getActiveReservation();
-    let servers = await this.queueServerRepository.getByQueueNode(activeReservation.getQueueNodeId());
+    const servers = await this.queueServerRepository.getByQueueNode(activeReservation.getQueueNodeId());
     servers.map(server => this.assignReservationToServer(server));
   }
 }
