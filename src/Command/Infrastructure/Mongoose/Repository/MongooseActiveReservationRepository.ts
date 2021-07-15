@@ -12,7 +12,7 @@ export default class MongooseActiveReservationRepository implements ActiveReserv
   private readonly Model: mongoose.Model<IActiveReservation & mongoose.Document>;
 
   constructor(connection: mongoose.Connection,
-              private transformer: ActiveReservationMongooseTransformer) {
+              private readonly transformer: ActiveReservationMongooseTransformer) {
     this.Model = connection.model<IActiveReservation & mongoose.Document>("ActiveReservation",
       ActiveReservationSchema);
   }
@@ -31,8 +31,8 @@ export default class MongooseActiveReservationRepository implements ActiveReserv
   }
 
   public async save(reservation: ActiveReservation): Promise<void> {
-    const instance = new this.Model(this.transformer.mongooseObjectFrom(reservation));
-    await instance.save();
+    const object = new this.Model(this.transformer.mongooseObjectFrom(reservation));
+    await object.save();
   }
 
 }
