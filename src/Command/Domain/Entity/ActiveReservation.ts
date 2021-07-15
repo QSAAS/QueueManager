@@ -25,4 +25,8 @@ export default class ActiveReservation extends AggregateRoot {
   public getClientId(): ClientId {
     return this.clientId;
   }
+
+  getQueueNodeId(): QueueNodeId {
+    return this.queueNodeId;
+  }
 }
