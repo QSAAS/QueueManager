@@ -31,8 +31,8 @@ export default class MongooseActiveReservationRepository implements ActiveReserv
   }
 
   public async save(reservation: ActiveReservation): Promise<void> {
-    const object = new this.Model(this.transformer.mongooseObjectFrom(reservation));
-    await object.save();
+    const instance = new this.Model(this.transformer.mongooseObjectFrom(reservation));
+    await instance.save();
   }
 
 }
