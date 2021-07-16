@@ -1,7 +1,7 @@
 import QueueServerSaved from "@app/Command/Domain/Event/QueueServerSaved";
 import QueueServerRepository from "@app/Command/Domain/Service/QueueServerRepository";
 
-export default class SaveQueueServer {
+export default class SaveQueueServerService {
   constructor(private queueServerRepository: QueueServerRepository) {}
 
   public async execute(event: QueueServerSaved): Promise<void> {
