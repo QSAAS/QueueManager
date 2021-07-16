@@ -6,12 +6,14 @@ import QueueServerRepository from "@app/Command/Domain/Service/QueueServerReposi
 import QueueServer from "@app/Command/Domain/Entity/QueueServer";
 import NextActiveReservationNotFoundForQueueServer from "@app/Command/Domain/Error/NextActiveReservationNotFoundForQueueServer";
 import QueueServerOperatorNotFoundForServer from "@app/Command/Domain/Error/QueueServerOperatorNotFoundForServer";
+import ActiveReservationRepository from "@app/Command/Domain/Service/ActiveReservationRepository";
 
 export default class QueueAllocatorServiceListener {
   constructor(
     private queueServerOperatorRepository: QueueServerOperatorRepository,
     private queueServerAllocatorService: QueueServerAllocatorService,
     private queueServerRepository: QueueServerRepository,
+    private activeReservationRepository: ActiveReservationRepository,
   ) {}
 
   public async executeBecauseServerBecameFree(event: QueueServerBecameFree): Promise<void> {
@@ -23,9 +25,9 @@ export default class QueueAllocatorServiceListener {
     try {
       const activeReservation = await this.queueServerAllocatorService.getNextActiveReservation(server);
       const operator = await this.queueServerOperatorRepository.getOperatorByQueueServer(server.getId());
-      // TODO: Ask weso, sure that we don't delete the just-assigned active reservation here?
       operator.startProcessingReservation(server, activeReservation);
       await this.queueServerOperatorRepository.update(operator);
+      await this.activeReservationRepository.delete(activeReservation);
     } catch (e) {
       if (
         !(e instanceof NextActiveReservationNotFoundForQueueServer || e instanceof QueueServerOperatorNotFoundForServer)

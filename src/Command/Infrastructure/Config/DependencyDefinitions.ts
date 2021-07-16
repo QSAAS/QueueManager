@@ -104,7 +104,6 @@ const definitions: DependencyDefinitions<DiEntry> = {
   [DiEntry.ReservationQueue]: (container) =>
     new FIFOReservationQueue(
       container.resolve(DiEntry.ActiveReservationRepository),
-      container.resolve(DiEntry.QueueServerOperatorRepository),
     ),
   [DiEntry.CancelReservationService]: (container) =>
     new CancelReservationService(
@@ -128,6 +127,7 @@ const definitions: DependencyDefinitions<DiEntry> = {
       container.resolve(DiEntry.QueueServerOperatorRepository),
       container.resolve(DiEntry.QueueServerAllocatorService),
       container.resolve(DiEntry.QueueServerRepository),
+      container.resolve(DiEntry.ActiveReservationRepository),
     ),
   [DiEntry.SaveQueueServerOperatorService]: (container) =>
     new SaveQueueServerOperatorService(
