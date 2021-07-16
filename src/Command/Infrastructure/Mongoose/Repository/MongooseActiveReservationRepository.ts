@@ -20,7 +20,7 @@ export default class MongooseActiveReservationRepository implements ActiveReserv
   }
 
   public async getById(id: ReservationId): Promise<ActiveReservation> {
-    const object = await this.Model.findOne({ id: id.toString() });
+    const object = await this.Model.findOne({ reservationId: id.toString() });
 
     if (!object) throw new ActiveReservationNotFound();
 
@@ -36,5 +36,9 @@ export default class MongooseActiveReservationRepository implements ActiveReserv
   public async save(reservation: ActiveReservation): Promise<void> {
     const instance = new this.Model(this.transformer.mongooseObjectFrom(reservation));
     await instance.save();
+  }
+
+  public getModel(): mongoose.Model<IActiveReservation & mongoose.Document> {
+    return this.Model;
   }
 }
