@@ -7,15 +7,15 @@ import createQueueServerRouter from "@app/Command/Presentation/Api/Routes/QueueS
 
 let container: DependencyInjectionContainer<DiEntry>;
 
-export async function getDependencyContainer(){
-  if(container === undefined) {
+export async function getDependencyContainer() {
+  if (container === undefined) {
     container = new DependencyInjectionContainer<DiEntry>();
-    await container.addDefinitions(DependencyDefinitions)
+    await container.addDefinitions(DependencyDefinitions);
   }
   return container;
 }
 
-async function createRouter(){
+async function createRouter() {
   const router = express.Router();
   const containerInstance = await getDependencyContainer();
   router.use("/reservation", createReservationRouter(containerInstance));

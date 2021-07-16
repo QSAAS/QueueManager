@@ -1,5 +1,5 @@
 import DependencyInjectionContainer from "@app/Command/Infrastructure/Config/DependencyInjectionContainer";
-import {DiEntry} from "@app/Command/Infrastructure/Config/DependencyDefinitions";
+import { DiEntry } from "@app/Command/Infrastructure/Config/DependencyDefinitions";
 import express from "express";
 import ReservationController from "@app/Command/Presentation/Api/Controller/ReservationController";
 
