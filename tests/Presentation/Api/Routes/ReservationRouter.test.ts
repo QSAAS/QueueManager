@@ -154,7 +154,7 @@ describe("manager/reservation", () => {
         .set("Accept", "application/json")
         .expect(403);
 
-      const docInDb = activeReservationRepository.getModel().findOne({
+      const docInDb = await activeReservationRepository.getModel().findOne({
         reservationId: doc.reservationId,
       });
       expect(docInDb).toBeDefined();
@@ -273,7 +273,7 @@ describe("manager/reservation", () => {
         .set("Accept", "application/json")
         .expect(409);
 
-      const docInDB = activeReservationRepository.getModel().findOne({reservationId: doc.reservationId});
+      const docInDB = await activeReservationRepository.getModel().findOne({reservationId: doc.reservationId});
       expect(docInDB).toBeDefined();
     });
   })
