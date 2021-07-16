@@ -35,4 +35,8 @@ export default class MongooseQueueServerRepository implements QueueServerReposit
     const instance = new this.Model(this.transformer.mongooseObjectFrom(queueServer));
     await instance.save();
   }
+
+  getModel() {
+    return this.Model;
+  }
 }
