@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   web:
-    container_name: "Queue-Manager-api"
+    container_name: "QueueManager-api"
 
     build:
       context: .
@@ -31,7 +31,7 @@ services:
     image: mongo
 
     ports:
-      - "27017:27017"
+      - "27018:27017"
 
     restart: always
 

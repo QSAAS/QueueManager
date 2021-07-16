@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   node_and_jest:
-    container_name: "organization-administration-jest"
+    container_name: "QueueManager-jest"
 
     build:
       context: .
@@ -28,6 +28,6 @@ services:
       driver: none
 
     ports:
-      - "27017:27017"
+      - "27018:27017"
 
     restart: "no"
