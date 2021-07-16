@@ -29,6 +29,7 @@ import QueueAllocatorServiceListener from "@app/Command/Application/Service/Queu
 import SaveQueueServerOperatorService from "@app/Command/Application/Service/SaveQueueServerOperatorService";
 import SaveQueueServerService from "@app/Command/Application/Service/SaveQueueServerService";
 import ReservationController from "@app/Command/Presentation/Api/Controller/ReservationController";
+import QueueServerController from "@app/Command/Presentation/Api/Controller/QueueServerController";
 
 export enum DiEntry {
   MONGOOSE_CONNECTION,
@@ -50,6 +51,7 @@ export enum DiEntry {
   SaveQueueServerOperatorService,
   SaveQueueServerService,
   ReservationController,
+  QueueServerController,
 }
 
 const definitions: DependencyDefinitions<DiEntry> = {
@@ -137,6 +139,11 @@ const definitions: DependencyDefinitions<DiEntry> = {
   [DiEntry.ReservationController]: (container) =>
     new ReservationController(
       container.resolve(DiEntry.CancelReservationService),
+    ),
+  [DiEntry.QueueServerController]: (container) =>
+    new QueueServerController(
+      container.resolve(DiEntry.ChangeQueueServerStatusService),
+      container.resolve(DiEntry.MarkQueueServerAsFreeService),
     ),
 };
 
