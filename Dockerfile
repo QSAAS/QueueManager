@@ -17,5 +17,6 @@ VOLUME /home/node/app/src
 
 FROM base as testing
 COPY jest.config.js ./jest.config.js
+#VOLUME /home/node/app
 COPY ./src ./src
 COPY ./tests ./tests
