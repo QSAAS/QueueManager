@@ -31,4 +31,8 @@ export default class ActiveQueueServer {
     this.reservation = null;
     return completeReservation;
   }
+
+  public isBusy(): boolean {
+    return this.reservation !== null;
+  }
 }
