@@ -46,7 +46,7 @@
     "dev": "nodemon src/index.ts",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "fix-style": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
-    "test": "jest --passWithNoTests --forceExit --runInBand --detectOpenHandles",
+    "test": "jest --passWithNoTests --forceExit --runInBand",
     "prettier-check": "prettier --check ./src",
     "prettier-fix": "prettier --write ./src"
   },
