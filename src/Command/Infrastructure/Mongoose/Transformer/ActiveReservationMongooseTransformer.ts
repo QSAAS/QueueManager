@@ -30,7 +30,7 @@ export default class ActiveReservationMongooseTransformer
       reservationId: instance.getId().toString(),
       clientId: instance.getClientId().toString(),
       queueNodeId: instance.getQueueNodeId().toString(),
-      reservationTime: instance.getReservationTime().toString(),
+      reservationTime: instance.getReservationTime().getTime(), // unix timestamp in ms
       verificationNumber: instance.getVerificationNumber().toString(),
       numberInQueue: instance.getNumberInQueue().toString(),
       metadata: this.metadataMongooseTransformer.mongooseObjectFrom(instance.getMetadata()),

@@ -13,7 +13,7 @@ export default class InServiceRegistrationMongooseTransformer
   mongooseObjectFrom(instance: InServiceReservation): IInServiceReservation {
     return {
       id: instance.getId().toString(),
-      serviceStartTime: instance.getServiceStartTime().toString(),
+      serviceStartTime: instance.getServiceStartTime().getTime(), // unix timestamp in ms
     };
   }
 }

@@ -5,7 +5,7 @@ const ActiveReservationSchema = new Schema({
   reservationId: String,
   clientId: String,
   queueNodeId: String,
-  reservationTime: String,
+  reservationTime: Number,
   verificationNumber: String,
   numberInQueue: String,
   metadata: MetadataSchema,

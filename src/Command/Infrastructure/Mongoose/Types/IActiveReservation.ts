@@ -4,7 +4,7 @@ export default interface IActiveReservation {
   reservationId: string;
   clientId: string;
   queueNodeId: string;
-  reservationTime: string;
+  reservationTime: number;
   verificationNumber: string;
   numberInQueue: string;
   // TODO: metadata
