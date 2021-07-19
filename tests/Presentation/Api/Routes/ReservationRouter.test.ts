@@ -1,13 +1,11 @@
 import request from "supertest";
 import DependencyInjectionContainer from "@app/Command/Infrastructure/Config/DependencyInjectionContainer";
-import {DiEntry} from "@app/Command/Infrastructure/Config/DependencyDefinitions";
-import {Express} from "express";
-import {getDependencyContainer} from "@app/Command/Presentation/Api/Routes/Router";
+import { DiEntry } from "@app/Command/Infrastructure/Config/DependencyDefinitions";
+import { Express } from "express";
+import { getDependencyContainer } from "@app/Command/Presentation/Api/Routes/Router";
 import createApp from "@app/app";
-import MongooseActiveReservationRepository
-  from "@app/Command/Infrastructure/Mongoose/Repository/MongooseActiveReservationRepository";
-import MongooseQueueServerOperatorRepository
-  from "@app/Command/Infrastructure/Mongoose/Repository/MongooseQueueServerOperatorRepository";
+import MongooseActiveReservationRepository from "@app/Command/Infrastructure/Mongoose/Repository/MongooseActiveReservationRepository";
+import MongooseQueueServerOperatorRepository from "@app/Command/Infrastructure/Mongoose/Repository/MongooseQueueServerOperatorRepository";
 
 let app: Express;
 let container: DependencyInjectionContainer<DiEntry>;
@@ -20,8 +18,12 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
-  activeReservationRepository = container.resolve<MongooseActiveReservationRepository>(DiEntry.ActiveReservationRepository);
-  queueServerOperatorRepository = container.resolve<MongooseQueueServerOperatorRepository>(DiEntry.QueueServerOperatorRepository);
+  activeReservationRepository = container.resolve<MongooseActiveReservationRepository>(
+    DiEntry.ActiveReservationRepository,
+  );
+  queueServerOperatorRepository = container.resolve<MongooseQueueServerOperatorRepository>(
+    DiEntry.QueueServerOperatorRepository,
+  );
   await activeReservationRepository.getModel().deleteMany({});
   await queueServerOperatorRepository.getModel().deleteMany({});
 });
@@ -37,7 +39,7 @@ describe("manager/reservation", () => {
         reservationTime: new Date(),
         verificationNumber: "::123::",
         numberInQueue: "::123::",
-        metadata: {}
+        metadata: {},
       });
 
       // 2 operators
@@ -54,8 +56,8 @@ describe("manager/reservation", () => {
             reservation: {
               id: "::rId::2",
               serviceStartTime: "1",
-            }
-          }
+            },
+          },
         ],
       });
 
@@ -67,7 +69,7 @@ describe("manager/reservation", () => {
           {
             id: "::aqsId::",
             reservation: null,
-          }
+          },
         ],
       });
 
@@ -79,7 +81,7 @@ describe("manager/reservation", () => {
           {
             id: "::aqsId3::",
             reservation: null,
-          }
+          },
         ],
       });
 
@@ -94,10 +96,9 @@ describe("manager/reservation", () => {
               id: "::otherRID::",
               serviceStartTime: "1",
             },
-          }
+          },
         ],
       });
-
 
       // returns 200
       const response = await request(app)
@@ -115,7 +116,7 @@ describe("manager/reservation", () => {
     });
 
     it("Should return 400 on missing clientId", async () => {
-      const response = await request(app)
+      await request(app)
         .post(PATH)
         .send({
           reservationId: "::rId::",
@@ -125,7 +126,7 @@ describe("manager/reservation", () => {
     });
 
     it("Should return 400 on missing reservationId", async () => {
-      const response = await request(app)
+      await request(app)
         .post(PATH)
         .send({
           clientId: "::cId::",
@@ -142,10 +143,10 @@ describe("manager/reservation", () => {
         reservationTime: new Date(),
         verificationNumber: "::123::",
         numberInQueue: "::123::",
-        metadata: {}
+        metadata: {},
       });
 
-      const response = await request(app)
+      await request(app)
         .post(PATH)
         .send({
           reservationId: "::rId::",
@@ -168,10 +169,10 @@ describe("manager/reservation", () => {
         reservationTime: new Date(),
         verificationNumber: "::123::",
         numberInQueue: "::123::",
-        metadata: {}
+        metadata: {},
       });
 
-      const response = await request(app)
+      await request(app)
         .post(PATH)
         .send({
           reservationId: "::otherRId::",
@@ -189,7 +190,7 @@ describe("manager/reservation", () => {
         reservationTime: new Date(),
         verificationNumber: "::123::",
         numberInQueue: "::123::",
-        metadata: {}
+        metadata: {},
       });
 
       // 2 operators
@@ -205,8 +206,8 @@ describe("manager/reservation", () => {
             reservation: {
               id: "::rId::",
               serviceStartTime: "1",
-            }
-          }
+            },
+          },
         ],
       });
 
@@ -220,8 +221,8 @@ describe("manager/reservation", () => {
             reservation: {
               id: "::rId::2",
               serviceStartTime: "1",
-            }
-          }
+            },
+          },
         ],
       });
 
@@ -233,7 +234,7 @@ describe("manager/reservation", () => {
           {
             id: "::aqsId::",
             reservation: null,
-          }
+          },
         ],
       });
 
@@ -245,7 +246,7 @@ describe("manager/reservation", () => {
           {
             id: "::aqsId3::",
             reservation: null,
-          }
+          },
         ],
       });
 
@@ -260,11 +261,11 @@ describe("manager/reservation", () => {
               id: "::otherRID::",
               serviceStartTime: "1",
             },
-          }
+          },
         ],
       });
 
-      const response = await request(app)
+      await request(app)
         .post(PATH)
         .send({
           reservationId: "::rId::",
@@ -273,8 +274,8 @@ describe("manager/reservation", () => {
         .set("Accept", "application/json")
         .expect(409);
 
-      const docInDB = await activeReservationRepository.getModel().findOne({reservationId: doc.reservationId});
+      const docInDB = await activeReservationRepository.getModel().findOne({ reservationId: doc.reservationId });
       expect(docInDB).toBeDefined();
     });
-  })
+  });
 });

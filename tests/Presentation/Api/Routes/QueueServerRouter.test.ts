@@ -1,12 +1,10 @@
-import {Express} from "express";
+import { Express } from "express";
 import DependencyInjectionContainer from "@app/Command/Infrastructure/Config/DependencyInjectionContainer";
-import {DiEntry} from "@app/Command/Infrastructure/Config/DependencyDefinitions";
-import MongooseQueueServerOperatorRepository
-  from "@app/Command/Infrastructure/Mongoose/Repository/MongooseQueueServerOperatorRepository";
-import {getDependencyContainer} from "@app/Command/Presentation/Api/Routes/Router";
+import { DiEntry } from "@app/Command/Infrastructure/Config/DependencyDefinitions";
+import MongooseQueueServerOperatorRepository from "@app/Command/Infrastructure/Mongoose/Repository/MongooseQueueServerOperatorRepository";
+import { getDependencyContainer } from "@app/Command/Presentation/Api/Routes/Router";
 import createApp from "@app/app";
-import MongooseQueueServerRepository
-  from "@app/Command/Infrastructure/Mongoose/Repository/MongooseQueueServerRepository";
+import MongooseQueueServerRepository from "@app/Command/Infrastructure/Mongoose/Repository/MongooseQueueServerRepository";
 import request from "supertest";
 
 let app: Express;
@@ -21,7 +19,9 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   queueServerRepository = container.resolve<MongooseQueueServerRepository>(DiEntry.QueueServerRepository);
-  queueServerOperatorRepository = container.resolve<MongooseQueueServerOperatorRepository>(DiEntry.QueueServerOperatorRepository);
+  queueServerOperatorRepository = container.resolve<MongooseQueueServerOperatorRepository>(
+    DiEntry.QueueServerOperatorRepository,
+  );
   await queueServerRepository.getModel().deleteMany({});
   await queueServerOperatorRepository.getModel().deleteMany({});
 });
@@ -56,7 +56,7 @@ describe("/manager/server", () => {
       const object = await queueServerOperatorRepository.getModel().findOne({
         id: "::queueServerOperatorId::",
       });
-      expect(object?.activeQueueServers.find(s => s.id === "::queueServerId::")).toBeDefined();
+      expect(object?.activeQueueServers.find((s) => s.id === "::queueServerId::")).toBeDefined();
     });
 
     it("Should deactivate an active server", async () => {
@@ -64,10 +64,12 @@ describe("/manager/server", () => {
         id: "::queueServerOperatorId::",
         assignedQueueServerIds: ["::queueServerId::"],
         assignedQueueNodeIds: [],
-        activeQueueServers: [{
-          id: "::queueServerId::",
-          reservation: null,
-        }],
+        activeQueueServers: [
+          {
+            id: "::queueServerId::",
+            reservation: null,
+          },
+        ],
       });
 
       await queueServerRepository.getModel().create({
@@ -88,7 +90,7 @@ describe("/manager/server", () => {
       const object = await queueServerOperatorRepository.getModel().findOne({
         id: "::queueServerOperatorId::",
       });
-      expect(object?.activeQueueServers.find(s => s.id === "::queueServerId::")).not.toBeDefined();
+      expect(object?.activeQueueServers.find((s) => s.id === "::queueServerId::")).not.toBeDefined();
     });
 
     it("Should return 400 on missing queueServerOperatorId", async () => {
@@ -117,7 +119,7 @@ describe("/manager/server", () => {
       console.log(response.body);
     });
 
-    it ("Should return 400 on missing setAsActive", async () => {
+    it("Should return 400 on missing setAsActive", async () => {
       const response = await request(app)
         .post(PATH)
         .send({
@@ -195,10 +197,12 @@ describe("/manager/server", () => {
         id: "::queueServerOperatorId::",
         assignedQueueServerIds: ["::queueServerId::"],
         assignedQueueNodeIds: [],
-        activeQueueServers: [{
-          id: "::queueServerId::",
-          reservation: null,
-        }],
+        activeQueueServers: [
+          {
+            id: "::queueServerId::",
+            reservation: null,
+          },
+        ],
       });
 
       await queueServerRepository.getModel().create({
@@ -250,13 +254,15 @@ describe("/manager/server", () => {
         id: "::queueServerOperatorId::",
         assignedQueueServerIds: ["::queueServerId::"],
         assignedQueueNodeIds: [],
-        activeQueueServers: [{
-          id: "::queueServerId::",
-          reservation: {
-            id: "reservationId",
-            serviceStartTime: "1",
+        activeQueueServers: [
+          {
+            id: "::queueServerId::",
+            reservation: {
+              id: "reservationId",
+              serviceStartTime: "1",
+            },
           },
-        }],
+        ],
       });
 
       await queueServerRepository.getModel().create({
@@ -272,12 +278,11 @@ describe("/manager/server", () => {
         .set("Accept", "application/json")
         .expect(200);
 
-
-        const object = await queueServerOperatorRepository.getModel().findOne({id: "::queueServerOperatorId::"});
-        expect(object?.activeQueueServers.find(s => s.id === "::queueServerId::")?.reservation).toBeNull();
+      const object = await queueServerOperatorRepository.getModel().findOne({ id: "::queueServerOperatorId::" });
+      expect(object?.activeQueueServers.find((s) => s.id === "::queueServerId::")?.reservation).toBeNull();
     });
 
-    it ("Should return 400 when queueServerId is missing from request", async () => {
+    it("Should return 400 when queueServerId is missing from request", async () => {
       await request(app)
         .post(PATH)
         .send({
@@ -331,7 +336,7 @@ describe("/manager/server", () => {
         .expect(404);
     });
 
-    it("Should return 403 when operator is not allowed on server",async  () => {
+    it("Should return 403 when operator is not allowed on server", async () => {
       await queueServerOperatorRepository.getModel().create({
         id: "::queueServerOperatorId::",
         assignedQueueServerIds: [],
@@ -358,10 +363,12 @@ describe("/manager/server", () => {
         id: "::queueServerOperatorId::",
         assignedQueueServerIds: ["::queueServerId::"],
         assignedQueueNodeIds: [],
-        activeQueueServers: [{
-          id: "::queueServerId::",
-          reservation: null,
-        }],
+        activeQueueServers: [
+          {
+            id: "::queueServerId::",
+            reservation: null,
+          },
+        ],
       });
 
       await queueServerRepository.getModel().create({
