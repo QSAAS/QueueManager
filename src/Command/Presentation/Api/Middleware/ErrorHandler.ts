@@ -7,6 +7,7 @@ import QueueServerNotFound from "@app/Command/Domain/Error/QueueServerNotFound";
 import QueueServerIsInactive from "@app/Command/Domain/Error/QueueServerIsInactive";
 import QueueServerIsActive from "@app/Command/Domain/Error/QueueServerIsActive";
 import ServerOperatorNotAllowedToAccessServer from "@app/Command/Domain/Error/ServerOperatorNotAllowedToAccessServer";
+import ActiveQueueServerIsFree from "@app/Command/Domain/Error/ActiveQueueServerIsFree";
 
 // TODO: so many possible throws
 const ErrorHandler: ErrorRequestHandler = (err, request, response, next) => {
@@ -41,6 +42,10 @@ const ErrorHandler: ErrorRequestHandler = (err, request, response, next) => {
   } else if (err instanceof ServerOperatorNotAllowedToAccessServer) {
     response.status(403).json({
       message: "Server is not allowed to access server",
+    });
+  } else if (err instanceof ActiveQueueServerIsFree) {
+    response.status(409).json({
+      message: "Active queue server is free",
     });
   }
   else {
