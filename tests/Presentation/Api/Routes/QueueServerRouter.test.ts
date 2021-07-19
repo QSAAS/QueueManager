@@ -31,11 +31,64 @@ describe("/manager/server", () => {
     const PATH = "/manager/server/change-status";
 
     it("Should activate an inactive server", async () => {
+      await queueServerOperatorRepository.getModel().create({
+        id: "::queueServerOperatorId::",
+        assignedQueueServerIds: ["::queueServerId::"],
+        assignedQueueNodeIds: [],
+        activeQueueServers: [],
+      });
 
+      await queueServerRepository.getModel().create({
+        id: "::queueServerId::",
+        assignedQueueNodeIds: [],
+      });
+
+      await request(app)
+        .post(PATH)
+        .send({
+          queueServerOperatorId: "::queueServerOperatorId::",
+          queueServerId: "::queueServerId::",
+          setAsActive: true,
+        })
+        .set("Accept", "application/json")
+        .expect(200);
+
+      const object = await queueServerOperatorRepository.getModel().findOne({
+        id: "::queueServerOperatorId::",
+      });
+      expect(object?.activeQueueServers.find(s => s.id === "::queueServerId::")).toBeDefined();
     });
 
     it("Should deactivate an active server", async () => {
+      await queueServerOperatorRepository.getModel().create({
+        id: "::queueServerOperatorId::",
+        assignedQueueServerIds: ["::queueServerId::"],
+        assignedQueueNodeIds: [],
+        activeQueueServers: [{
+          id: "::queueServerId::",
+          reservation: null,
+        }],
+      });
 
+      await queueServerRepository.getModel().create({
+        id: "::queueServerId::",
+        assignedQueueNodeIds: [],
+      });
+
+      await request(app)
+        .post(PATH)
+        .send({
+          queueServerOperatorId: "::queueServerOperatorId::",
+          queueServerId: "::queueServerId::",
+          setAsActive: false,
+        })
+        .set("Accept", "application/json")
+        .expect(200);
+
+      const object = await queueServerOperatorRepository.getModel().findOne({
+        id: "::queueServerOperatorId::",
+      });
+      expect(object?.activeQueueServers.find(s => s.id === "::queueServerId::")).not.toBeDefined();
     });
 
     it("Should return 400 on missing queueServerOperatorId", async () => {
