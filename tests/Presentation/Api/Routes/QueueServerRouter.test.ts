@@ -102,19 +102,90 @@ describe("/manager/server", () => {
     });
 
     it("Should return 404 when operator is not found", async () => {
+      await queueServerRepository.getModel().create({
+        id: "::queueServerId::",
+        assignedQueueNodeIds: [],
+      });
 
+      await request(app)
+        .post(PATH)
+        .send({
+          queueServerOperatorId: "::queueServerOperatorId::",
+          queueServerId: "::queueServerId::",
+          setAsActive: true,
+        })
+        .set("Accept", "application/json")
+        .expect(404);
     });
 
     it("Should return 404 when server is not found", async () => {
+      await queueServerOperatorRepository.getModel().create({
+        id: "::queueServerOperatorId::",
+        assignedQueueServerIds: ["::queueServerId::"],
+        assignedQueueNodeIds: [],
+        activeQueueServers: [],
+      });
 
+      await request(app)
+        .post(PATH)
+        .send({
+          queueServerOperatorId: "::queueServerOperatorId::",
+          queueServerId: "::queueServerId::",
+          setAsActive: true,
+        })
+        .set("Accept", "application/json")
+        .expect(404);
     });
 
     it("Should return 409 when activating an already active server", async () => {
+      await queueServerOperatorRepository.getModel().create({
+        id: "::queueServerOperatorId::",
+        assignedQueueServerIds: ["::queueServerId::"],
+        assignedQueueNodeIds: [],
+        activeQueueServers: [{
+          id: "::queueServerId::",
+          reservation: null,
+        }],
+      });
 
+      await queueServerRepository.getModel().create({
+        id: "::queueServerId::",
+        assignedQueueNodeIds: [],
+      });
+
+      await request(app)
+        .post(PATH)
+        .send({
+          queueServerOperatorId: "::queueServerOperatorId::",
+          queueServerId: "::queueServerId::",
+          setAsActive: true,
+        })
+        .set("Accept", "application/json")
+        .expect(409);
     });
 
     it("Should return 409 when deactivating an already inactive server", async () => {
+      await queueServerOperatorRepository.getModel().create({
+        id: "::queueServerOperatorId::",
+        assignedQueueServerIds: ["::queueServerId::"],
+        assignedQueueNodeIds: [],
+        activeQueueServers: [],
+      });
 
+      await queueServerRepository.getModel().create({
+        id: "::queueServerId::",
+        assignedQueueNodeIds: [],
+      });
+
+      await request(app)
+        .post(PATH)
+        .send({
+          queueServerOperatorId: "::queueServerOperatorId::",
+          queueServerId: "::queueServerId::",
+          setAsActive: false,
+        })
+        .set("Accept", "application/json")
+        .expect(409);
     });
   });
 });
