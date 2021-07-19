@@ -61,8 +61,8 @@ export default class MongooseQueueServerOperatorRepository implements QueueServe
   }
 
   public async update(queueServerOperator: QueueServerOperator): Promise<void> {
-    const instance = new this.Model(this.transformer.mongooseObjectFrom(queueServerOperator));
-    await this.Model.findOneAndReplace({id: instance.id}, instance);
+    const instance = this.transformer.mongooseObjectFrom(queueServerOperator);
+      await this.Model.findOneAndUpdate({id: instance.id}, instance);
   }
 
   getModel() {
