@@ -5,13 +5,11 @@ import QueueServerId from "@app/Command/Domain/ValueObject/QueueServerId";
 import ReservationId from "@app/Command/Domain/ValueObject/ReservationId";
 import * as mongoose from "mongoose";
 import IQueueServerOperator from "@app/Command/Infrastructure/Mongoose/Types/IQueueServerOperator";
-import QueueServerOperatorMongooseTransformer
-  from "@app/Command/Infrastructure/Mongoose/Transformer/QueueServerOperatorMongooseTransformer";
+import QueueServerOperatorMongooseTransformer from "@app/Command/Infrastructure/Mongoose/Transformer/QueueServerOperatorMongooseTransformer";
 import QueueServerOperatorSchema from "@app/Command/Infrastructure/Mongoose/Schema/QueueServerOperatorSchema";
 import QueueServerOperatorNotFound from "@app/Command/Domain/Error/QueueServerOperatorNotFound";
 import QueueServerOperatorNotFoundForServer from "@app/Command/Domain/Error/QueueServerOperatorNotFoundForServer";
-import QueueServerOperatorNotFoundForReservation
-  from "@app/Command/Domain/Error/QueueServerOperatorNotFoundForReservation";
+import QueueServerOperatorNotFoundForReservation from "@app/Command/Domain/Error/QueueServerOperatorNotFoundForReservation";
 
 export default class MongooseQueueServerOperatorRepository implements QueueServerOperatorRepository {
   private readonly Model: mongoose.Model<IQueueServerOperator & mongoose.Document>;
@@ -24,7 +22,7 @@ export default class MongooseQueueServerOperatorRepository implements QueueServe
   }
 
   public async getById(id: QueueServerOperatorId): Promise<QueueServerOperator> {
-    const object = await this.Model.findOne({id: id.toString()});
+    const object = await this.Model.findOne({ id: id.toString() });
 
     if (!object) throw new QueueServerOperatorNotFound();
 
@@ -35,7 +33,7 @@ export default class MongooseQueueServerOperatorRepository implements QueueServe
     // TODO: Everything should be tested, but this should be extra tested
     // The query is supposed to be: Get all queue server operators that contain this queueServerId as one of
     // the elements of assignedQueueServerIds
-    const object = await this.Model.findOne({assignedQueueServerIds: id.toString()});
+    const object = await this.Model.findOne({ assignedQueueServerIds: id.toString() });
 
     if (!object) throw new QueueServerOperatorNotFoundForServer();
 
@@ -62,7 +60,7 @@ export default class MongooseQueueServerOperatorRepository implements QueueServe
 
   public async update(queueServerOperator: QueueServerOperator): Promise<void> {
     const instance = this.transformer.mongooseObjectFrom(queueServerOperator);
-      await this.Model.findOneAndUpdate({id: instance.id}, instance);
+    await this.Model.findOneAndUpdate({ id: instance.id }, instance);
   }
 
   getModel() {

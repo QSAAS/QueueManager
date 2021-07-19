@@ -54,8 +54,7 @@ export default class QueueServerOperator extends AggregateRoot {
       const completeReservation = activeServer.completeReservation();
       this.raiseEvent(new ReservationCompleted(completeReservation));
     }
-    this.activeQueueServers = this.activeQueueServers
-      .filter((other) => !other.getId().equals(queueServer.getId()));
+    this.activeQueueServers = this.activeQueueServers.filter((other) => !other.getId().equals(queueServer.getId()));
     this.raiseEvent(new QueueServerDeactivated(queueServer));
   }
 

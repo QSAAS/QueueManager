@@ -37,7 +37,7 @@ const ErrorHandler: ErrorRequestHandler = (err, request, response, next) => {
     });
   } else if (err instanceof QueueServerIsActive) {
     response.status(409).json({
-      message: "Queue server is inactive"
+      message: "Queue server is inactive",
     });
   } else if (err instanceof ServerOperatorNotAllowedToAccessServer) {
     response.status(403).json({
@@ -47,8 +47,7 @@ const ErrorHandler: ErrorRequestHandler = (err, request, response, next) => {
     response.status(409).json({
       message: "Active queue server is free",
     });
-  }
-  else {
+  } else {
     response.status(500).json({
       message: err.message,
     });
