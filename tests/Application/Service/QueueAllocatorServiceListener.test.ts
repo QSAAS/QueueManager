@@ -18,6 +18,8 @@ import QueueServerId from "@app/Command/Domain/ValueObject/QueueServerId";
 import QueueServerOperatorId from "@app/Command/Domain/ValueObject/QueueServerOperatorId";
 import QueueAllocatorServiceListener from "@app/Command/Application/Service/QueueAllocatorServiceListener";
 import NewReservationCreated from "@app/Command/Domain/Event/NewReservationCreated";
+import QueueServerBecameFree from "@app/Command/Domain/Event/QueueServerBecameFree";
+import QueueServer from "@app/Command/Domain/Entity/QueueServer";
 
 let container: DependencyInjectionContainer<DiEntry>;
 let queueServerOperatorRepository: MongooseQueueServerOperatorRepository;
@@ -174,6 +176,75 @@ describe("QueueAllocatorServiceListener", () => {
   });
 
   describe("Active queue server became free", () => {
+    it("Should allocate an active reservation to the server", async () => {
+      const server = new QueueServer(
+        QueueServerId.create(),
+        [QueueNodeId.create()],
+      );
 
+      await queueServerRepository.save(server);
+
+      const activeReservation = await activeReservationRepository
+        .getModel()
+        .create({
+          reservationId: ReservationId.create().toString(),
+          clientId: ClientId.create().toString(),
+          reservationTime: 1,
+          verificationNumber: VerificationNumber.create().toString(),
+          numberInQueue: QueueNumber.create().toString(),
+          queueNodeId: server.getAssignedQueueNodeIds()[0],
+          metadata: {}
+        });
+
+      const operator = await queueServerOperatorRepository
+        .getModel()
+        .create({
+          id: QueueServerOperatorId.create().toString(),
+          assignedQueueNodeIds: [server.getAssignedQueueNodeIds()[0]],
+          assignedQueueServerIds: [server.getId()],
+          activeQueueServers: [{
+            id: server.getId(),
+            reservation: null,
+          }]
+        });
+
+      await queueAllocatorServiceListener.executeBecauseServerBecameFree(
+        new QueueServerBecameFree(server)
+      );
+
+      const reservationObject = await activeReservationRepository.getModel().findOne({reservationId: activeReservation.reservationId});
+      expect(reservationObject).toBeNull();
+
+      const operatorObject = await queueServerOperatorRepository.getModel().findOne({id: operator.id});
+      expect(operatorObject?.activeQueueServers.find(s => s.id === server.getId().toString())?.reservation?.id).toEqual(activeReservation.reservationId);
+    });
+
+    it("Should do nothing if there is no active reservations", async () => {
+      const server = new QueueServer(
+        QueueServerId.create(),
+        [QueueNodeId.create()],
+      );
+
+      await queueServerRepository.save(server);
+
+      const operator = await queueServerOperatorRepository
+        .getModel()
+        .create({
+          id: QueueServerOperatorId.create().toString(),
+          assignedQueueNodeIds: [server.getAssignedQueueNodeIds()[0]],
+          assignedQueueServerIds: [server.getId()],
+          activeQueueServers: [{
+            id: server.getId(),
+            reservation: null,
+          }]
+        });
+
+      await queueAllocatorServiceListener.executeBecauseServerBecameFree(
+        new QueueServerBecameFree(server)
+      );
+
+      const operatorObject = await queueServerOperatorRepository.getModel().findOne({id: operator.id});
+      expect(operatorObject?.activeQueueServers.find(s => s.id === server.getId().toString())?.reservation).toBeNull();
+    });
   });
 });
