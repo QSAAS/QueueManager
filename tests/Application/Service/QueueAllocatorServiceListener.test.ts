@@ -227,6 +227,18 @@ describe("QueueAllocatorServiceListener", () => {
 
       await queueServerRepository.save(server);
 
+      await activeReservationRepository
+        .getModel()
+        .create({
+          reservationId: ReservationId.create().toString(),
+          clientId: ClientId.create().toString(),
+          reservationTime: 1,
+          verificationNumber: VerificationNumber.create().toString(),
+          numberInQueue: QueueNumber.create().toString(),
+          queueNodeId: QueueNodeId.create().toString(),
+          metadata: {}
+        });
+
       const operator = await queueServerOperatorRepository
         .getModel()
         .create({
