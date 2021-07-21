@@ -16,7 +16,7 @@ export default class MongooseActiveReservationRepository implements ActiveReserv
   }
 
   public async delete(reservation: ActiveReservation): Promise<void> {
-    await this.Model.findOneAndDelete({ id: reservation.getId().toString() });
+    await this.Model.findOneAndDelete({ reservationId: reservation.getId().toString() });
   }
 
   public async getById(id: ReservationId): Promise<ActiveReservation> {

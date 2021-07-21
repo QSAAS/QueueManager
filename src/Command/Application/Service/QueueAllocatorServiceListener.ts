@@ -39,6 +39,6 @@ export default class QueueAllocatorServiceListener {
   public async executeBecauseNewReservationCreated(event: NewReservationCreated) {
     const activeReservation = event.getActiveReservation();
     const servers = await this.queueServerRepository.getByQueueNode(activeReservation.getQueueNodeId());
-    servers.map((server) => this.assignReservationToServer(server));
+    await Promise.all(servers.map(async (server) => await this.assignReservationToServer(server)));
   }
 }
