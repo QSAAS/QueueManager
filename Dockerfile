@@ -6,7 +6,7 @@ COPY package*.json ./
 
 COPY tsconfig.json ./
 
-COPY .env ./.env
+#COPY .env ./.env
 
 RUN apk add --no-cache bash
 
