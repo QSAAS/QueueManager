@@ -14,7 +14,6 @@ export default class ActiveReservation extends AggregateRoot {
     private reservationTime: Date,
     private verificationNumber: VerificationNumber,
     private numberInQueue: QueueNumber,
-    // TODO: metadata
     private metadata: Metadata,
   ) {
     super();

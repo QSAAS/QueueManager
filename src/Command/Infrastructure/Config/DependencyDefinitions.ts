@@ -21,6 +21,8 @@ import SaveQueueServerOperatorService from "@app/Command/Application/Service/Sav
 import SaveQueueServerService from "@app/Command/Application/Service/SaveQueueServerService";
 import ReservationController from "@app/Command/Presentation/Api/Controller/ReservationController";
 import QueueServerController from "@app/Command/Presentation/Api/Controller/QueueServerController";
+import MetadataEntryMongooseTransformer
+  from "@app/Command/Infrastructure/Mongoose/Transformer/MetadataEntryMongooseTransformer";
 
 export enum DiEntry {
   MONGOOSE_CONNECTION,
@@ -43,6 +45,7 @@ export enum DiEntry {
   SaveQueueServerService,
   ReservationController,
   QueueServerController,
+  MetadataEntryMongooseTransformer,
 }
 
 const definitions: DependencyDefinitions<DiEntry> = {
@@ -75,7 +78,8 @@ const definitions: DependencyDefinitions<DiEntry> = {
   [DiEntry.ActiveReservationMongooseTransformer]: (container) =>
     new ActiveReservationMongooseTransformer(container.resolve(DiEntry.MetadataMongooseTransformer)),
   [DiEntry.InServiceRegistrationMongooseTransformer]: () => new InServiceRegistrationMongooseTransformer(),
-  [DiEntry.MetadataMongooseTransformer]: () => new MetadataMongooseTransformer(),
+  [DiEntry.MetadataMongooseTransformer]: (container) =>
+    new MetadataMongooseTransformer(container.resolve(DiEntry.MetadataEntryMongooseTransformer)),
   [DiEntry.QueueServerMongooseTransformer]: () => new QueueServerMongooseTransformer(),
   [DiEntry.QueueServerOperatorMongooseTransformer]: (container) =>
     new QueueServerOperatorMongooseTransformer(container.resolve(DiEntry.ActiveQueueServerMongooseTransformer)),
@@ -118,6 +122,7 @@ const definitions: DependencyDefinitions<DiEntry> = {
       container.resolve(DiEntry.ChangeQueueServerStatusService),
       container.resolve(DiEntry.MarkQueueServerAsFreeService),
     ),
+  [DiEntry.MetadataEntryMongooseTransformer]: () => new MetadataEntryMongooseTransformer(),
 };
 
 export default definitions;

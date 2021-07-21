@@ -30,7 +30,6 @@ export default class MongooseQueueServerOperatorRepository implements QueueServe
   }
 
   public async getOperatorByQueueServer(id: QueueServerId): Promise<QueueServerOperator> {
-    // TODO: Everything should be tested, but this should be extra tested
     // The query is supposed to be: Get all queue server operators that contain this queueServerId as one of
     // the elements of assignedQueueServerIds
     const object = await this.Model.findOne({ assignedQueueServerIds: id.toString() });
@@ -41,7 +40,6 @@ export default class MongooseQueueServerOperatorRepository implements QueueServe
   }
 
   public async getOperatorByReservation(id: ReservationId): Promise<QueueServerOperator> {
-    // TODO: Everything should be tested, but this should be extra tested
     // The query is supposed to be: Get all queue server operators that contain an activeQueueServer
     // that has a reservation with given id
     const object = await this.Model.findOne({

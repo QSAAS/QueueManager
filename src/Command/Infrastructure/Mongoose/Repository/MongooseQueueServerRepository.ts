@@ -24,7 +24,6 @@ export default class MongooseQueueServerRepository implements QueueServerReposit
   }
 
   public async getByQueueNode(queueNodeId: QueueNodeId): Promise<QueueServer[]> {
-    // TODO: Everything should be tested, but this should be extra tested
     // The query is supposed to be: Get all queue servers that contain queueNodeId as one of
     // the elements of assignedQueueNodeIds
     const objects = await this.Model.find({ assignedQueueNodeIds: queueNodeId.toString() });

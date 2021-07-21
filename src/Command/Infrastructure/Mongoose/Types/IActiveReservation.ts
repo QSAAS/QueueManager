@@ -7,6 +7,5 @@ export default interface IActiveReservation {
   reservationTime: number;
   verificationNumber: string;
   numberInQueue: string;
-  // TODO: metadata
   metadata: IMetadata;
 }

@@ -51,7 +51,7 @@ describe("QueueAllocatorServiceListener", () => {
         new Date(),
         VerificationNumber.create(),
         QueueNumber.create(),
-        new Metadata(),
+        new Metadata([]),
       );
 
       await activeReservationRepository
@@ -97,7 +97,7 @@ describe("QueueAllocatorServiceListener", () => {
         new Date(),
         VerificationNumber.create(),
         QueueNumber.create(),
-        new Metadata(),
+        new Metadata([]),
       );
 
       await activeReservationRepository
@@ -143,7 +143,7 @@ describe("QueueAllocatorServiceListener", () => {
         new Date(),
         VerificationNumber.create(),
         QueueNumber.create(),
-        new Metadata(),
+        new Metadata([]),
       );
 
       await activeReservationRepository
@@ -193,7 +193,9 @@ describe("QueueAllocatorServiceListener", () => {
           verificationNumber: VerificationNumber.create().toString(),
           numberInQueue: QueueNumber.create().toString(),
           queueNodeId: server.getAssignedQueueNodeIds()[0],
-          metadata: {}
+          metadata: {
+            metadata: []
+          },
         });
 
       const operator = await queueServerOperatorRepository
@@ -236,7 +238,9 @@ describe("QueueAllocatorServiceListener", () => {
           verificationNumber: VerificationNumber.create().toString(),
           numberInQueue: QueueNumber.create().toString(),
           queueNodeId: QueueNodeId.create().toString(),
-          metadata: {}
+          metadata: {
+            metadata: []
+          },
         });
 
       const operator = await queueServerOperatorRepository

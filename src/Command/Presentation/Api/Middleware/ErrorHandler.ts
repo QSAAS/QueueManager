@@ -9,7 +9,6 @@ import QueueServerIsActive from "@app/Command/Domain/Error/QueueServerIsActive";
 import ServerOperatorNotAllowedToAccessServer from "@app/Command/Domain/Error/ServerOperatorNotAllowedToAccessServer";
 import ActiveQueueServerIsFree from "@app/Command/Domain/Error/ActiveQueueServerIsFree";
 
-// TODO: so many possible throws
 const ErrorHandler: ErrorRequestHandler = (err, request, response, next) => {
   if (err instanceof ValidationError) {
     response.status(400).json({

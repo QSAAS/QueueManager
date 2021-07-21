@@ -39,7 +39,9 @@ describe("manager/reservation", () => {
         reservationTime: new Date(),
         verificationNumber: "::123::",
         numberInQueue: "::123::",
-        metadata: {},
+        metadata: {
+          metadata: []
+        },
       });
 
       // 2 operators
@@ -143,7 +145,9 @@ describe("manager/reservation", () => {
         reservationTime: new Date(),
         verificationNumber: "::123::",
         numberInQueue: "::123::",
-        metadata: {},
+        metadata: {
+          metadata: []
+        },
       });
 
       await request(app)
@@ -169,7 +173,9 @@ describe("manager/reservation", () => {
         reservationTime: new Date(),
         verificationNumber: "::123::",
         numberInQueue: "::123::",
-        metadata: {},
+        metadata: {
+          metadata: []
+        },
       });
 
       await request(app)
@@ -190,7 +196,9 @@ describe("manager/reservation", () => {
         reservationTime: new Date(),
         verificationNumber: "::123::",
         numberInQueue: "::123::",
-        metadata: {},
+        metadata: {
+          metadata: []
+        },
       });
 
       // 2 operators
