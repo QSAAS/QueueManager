@@ -87,9 +87,90 @@ describe("QueueAllocatorServiceListener", () => {
       expect(operatorObject?.activeQueueServers.find(s => s.id === server.id)?.reservation?.id).toEqual(activeReservation.getId().toString());
     });
 
-    it("Should do nothing if there is no available server", async () => {
+    it("Should do nothing if there is server is busy", async () => {
+      const activeReservation = new ActiveReservation(
+        ReservationId.create(),
+        ClientId.create(),
+        QueueNodeId.create(),
+        new Date(),
+        VerificationNumber.create(),
+        QueueNumber.create(),
+        new Metadata(),
+      );
 
+      await activeReservationRepository
+        .save(activeReservation);
+
+      const server = await queueServerRepository
+        .getModel()
+        .create({
+          id: QueueServerId.create().toString(),
+          assignedQueueNodeIds: [activeReservation.getQueueNodeId()],
+        });
+
+      await queueServerOperatorRepository
+        .getModel()
+        .create({
+          id: QueueServerOperatorId.create().toString(),
+          assignedQueueServerIds: [server.id],
+          assignedQueueNodeIds: [activeReservation.getQueueNodeId().toString()],
+          activeQueueServers: [
+            {
+              id: server.id,
+              reservation: {
+                id: "id",
+                serviceStartTime: 1,
+              },
+            }
+          ]
+        });
+
+      await queueAllocatorServiceListener.executeBecauseNewReservationCreated(
+        new NewReservationCreated(activeReservation)
+      );
+
+      const reservationObject = await activeReservationRepository.getModel().findOne({reservationId: activeReservation.getId().toString()});
+      expect(reservationObject).not.toBeNull();
     });
+
+    it("Should do nothing if there is server is not active", async () => {
+      const activeReservation = new ActiveReservation(
+        ReservationId.create(),
+        ClientId.create(),
+        QueueNodeId.create(),
+        new Date(),
+        VerificationNumber.create(),
+        QueueNumber.create(),
+        new Metadata(),
+      );
+
+      await activeReservationRepository
+        .save(activeReservation);
+
+      const server = await queueServerRepository
+        .getModel()
+        .create({
+          id: QueueServerId.create().toString(),
+          assignedQueueNodeIds: [activeReservation.getQueueNodeId()],
+        });
+
+      await queueServerOperatorRepository
+        .getModel()
+        .create({
+          id: QueueServerOperatorId.create().toString(),
+          assignedQueueServerIds: [server.id],
+          assignedQueueNodeIds: [activeReservation.getQueueNodeId().toString()],
+          activeQueueServers: []
+        });
+
+      await queueAllocatorServiceListener.executeBecauseNewReservationCreated(
+        new NewReservationCreated(activeReservation)
+      );
+
+      const reservationObject = await activeReservationRepository.getModel().findOne({reservationId: activeReservation.getId().toString()});
+      expect(reservationObject).not.toBeNull();
+    });
+
   });
 
   describe("Active queue server became free", () => {

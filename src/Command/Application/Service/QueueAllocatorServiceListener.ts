@@ -7,6 +7,8 @@ import QueueServer from "@app/Command/Domain/Entity/QueueServer";
 import NextActiveReservationNotFoundForQueueServer from "@app/Command/Domain/Error/NextActiveReservationNotFoundForQueueServer";
 import QueueServerOperatorNotFoundForServer from "@app/Command/Domain/Error/QueueServerOperatorNotFoundForServer";
 import ActiveReservationRepository from "@app/Command/Domain/Service/ActiveReservationRepository";
+import ActiveQueueServerIsBusy from "@app/Command/Domain/Error/ActiveQueueServerIsBusy";
+import QueueServerIsInactive from "@app/Command/Domain/Error/QueueServerIsInactive";
 
 export default class QueueAllocatorServiceListener {
   constructor(
@@ -30,7 +32,8 @@ export default class QueueAllocatorServiceListener {
       await this.activeReservationRepository.delete(activeReservation);
     } catch (e) {
       if (
-        !(e instanceof NextActiveReservationNotFoundForQueueServer || e instanceof QueueServerOperatorNotFoundForServer)
+        !(e instanceof NextActiveReservationNotFoundForQueueServer || e instanceof QueueServerOperatorNotFoundForServer
+        || e instanceof ActiveQueueServerIsBusy || e instanceof QueueServerIsInactive)
       )
         throw e;
     }
