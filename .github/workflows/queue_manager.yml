@@ -1,0 +1,78 @@
+name: Lint, Test, Build and Publish docker images
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+on:
+  push:
+    branches:
+      - 'development'
+      - 'devops/*'
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - 'development'
+
+jobs:
+  linting:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: .
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install NPM packages
+        run: npm ci
+
+      - name: Run eslint checks
+        run: npm run lint
+
+  test:
+    runs-on: ubuntu-latest
+    needs:
+      - linting
+    defaults:
+      run:
+        working-directory: .
+    env:
+      SERVER_PORT: 8000
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run docker
+        run: docker-compose -f docker-compose-test.yml up --build  --exit-code-from node_and_jest
+  docker-build-push:
+    runs-on: ubuntu-latest
+    needs:
+      - test
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ghcr.io/QSAAS/QueueManager
+      -
+        name: Login to registry [github for now]
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      -
+        name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context:  .
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
