@@ -1,0 +1,4 @@
+/helm/*/templates/*secret.yaml
+/helm/*/templates/*.secret.yaml
+/helm/*/*secret.yaml
+/helm/*/*.secret.yaml
