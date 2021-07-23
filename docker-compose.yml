@@ -15,6 +15,7 @@ services:
       DB_URL: mongo-db
       DB_PORT: 27017
       DB_NAME: "qsaas"
+      SERVER_PORT: 8072
 
     depends_on:
       - mongo-db
