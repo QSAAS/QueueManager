@@ -8,10 +8,10 @@ import ClientId from "@app/Command/Domain/ValueObject/ClientId";
 export default async function createReservationQueryRouter() {
   const router = express.Router();
   const containerInstance = await getDependencyContainer();
-  router.get("/client-reservations", async (request, response) => {
+  router.get("/", async (request, response) => {
     const activeReservationRepository = containerInstance
       .resolve<MongooseActiveReservationRepository>(DiEntry.ActiveReservationRepository);
-    const clientId = request.query.clientId;
+    const clientId = request.query?.clientId;
     if (!clientId) {
       response.status(400).json({
         error: "Missing required parameter clientId",
