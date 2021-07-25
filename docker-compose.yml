@@ -12,19 +12,19 @@ services:
       - "./src:/home/node/app/src"
 
     environment:
-      DB_URL: mongo-db
-      DB_PORT: 27017
-      DB_NAME: "qsaas"
-      SERVER_PORT: 8072
+      - SERVER_PORT=8003
+      - DB_URL=mongo-db
+      - DB_PORT=27017
+      - DB_NAME=qsaas_test
+      - RABBIT_MQ_URL=amqp://myrabbitmq:5672
+      - JWT_KEY=key
+      - ENV
 
     depends_on:
       - mongo-db
 
     ports:
-      - "8072:80"
-
-    networks:
-      - rabbitmq-net
+      - "8003:80"
 
     command: "npm run dev"
 
@@ -36,20 +36,21 @@ services:
 
     restart: always
 
-    networks:
-      - rabbitmq-net
-
     volumes:
       - "mongodb:/data/db"
 
     logging:
       driver: none
 
+  myrabbitmq:
+    image: rabbitmq:3-management-alpine
+
+    ports:
+      - 5672:5672
+      - 15672:15672 # HTTP management port, use guest/guest for logging in
+
+    volumes:
+      - "rabbitmq-data:/var/lib/rabbitmq"
 volumes:
   mongodb:
-
-
-networks:
-  rabbitmq-net:
-    driver: bridge
-    name: rabbitmq-net
+  rabbitmq-data:
