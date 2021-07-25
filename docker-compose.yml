@@ -21,7 +21,7 @@ services:
       - mongo-db
 
     ports:
-      - "${SERVER_PORT}:80"
+      - "8072:80"
 
     networks:
       - rabbitmq-net
