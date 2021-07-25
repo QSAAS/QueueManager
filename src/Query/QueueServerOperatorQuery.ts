@@ -14,13 +14,20 @@ export default async function createQueueServerOperatorRouter() {
     if (!queueServerOperatorId) {
       response.status(400).json({
         error: "Missing required parameter queueServerOperatorId",
-      });
+      }).json();
     } else if (typeof (queueServerOperatorId) != "string") {
       response.status(400).json({
         error: "queueServerOperatorId must be a string",
-      });
+      }).json();
     } else {
-      response.json(await queueServerOperatorRepository.getById(QueueServerOperatorId.from(queueServerOperatorId)))
+      try {
+        const ret = await queueServerOperatorRepository.getById(QueueServerOperatorId.from(queueServerOperatorId));
+        response.json(ret);
+      } catch(e) {
+        response.status(404).json({
+          error: "Operator not found"
+        }).json();
+      }
     }
   });
   return router;

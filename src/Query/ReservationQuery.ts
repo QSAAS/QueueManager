@@ -12,6 +12,7 @@ export default async function createReservationQueryRouter() {
     const activeReservationRepository = containerInstance
       .resolve<MongooseActiveReservationRepository>(DiEntry.ActiveReservationRepository);
     const clientId = request.query?.clientId;
+    console.log(clientId);
     if (!clientId) {
       response.status(400).json({
         error: "Missing required parameter clientId",
@@ -21,7 +22,8 @@ export default async function createReservationQueryRouter() {
         error: "clientId must be a string",
       });
     } else {
-      response.json(await activeReservationRepository.getById(ClientId.from(clientId)))
+      const ret = await activeReservationRepository.getByClientId(ClientId.from(clientId));
+      response.json(ret);
     }
   });
   return router;
