@@ -11,11 +11,15 @@ export default class ArbitraryQueueServerAllocatorService implements QueueServer
 
   public async getNextActiveReservation(queueServer: QueueServer): Promise<ActiveReservation> {
     let arbitraryNextReservation;
-    for (const queueNodeId of queueServer.getAssignedQueueNodeIds()) {
+    for (let i = 0; i < queueServer.getAssignedQueueNodeIds().length; i++){
+      const queueNodeId = queueServer.getAssignedQueueNodeIds()[i];
       try {
+        // eslint-disable-next-line no-await-in-loop
         arbitraryNextReservation = await this.reservationQueue.getNextReservation(queueNodeId);
         break;
-      } catch(e) {}
+      } catch(e) {
+        console.log(e);
+      }
     }
     if (!arbitraryNextReservation)
       throw new NextActiveReservationNotFoundForQueueServer();

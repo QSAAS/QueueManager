@@ -7,6 +7,7 @@ import ActiveReservationMongooseTransformer from "@app/Command/Infrastructure/Mo
 import ActiveReservationSchema from "@app/Command/Infrastructure/Mongoose/Schema/ActiveReservationSchema";
 import ActiveReservationNotFound from "@app/Command/Domain/Error/ActiveReservationNotFound";
 import QueueNodeId from "@app/Command/Domain/ValueObject/QueueNodeId";
+import ClientId from "@app/Command/Domain/ValueObject/ClientId";
 
 export default class MongooseActiveReservationRepository implements ActiveReservationRepository {
   private readonly Model: mongoose.Model<IActiveReservation & mongoose.Document>;
@@ -36,6 +37,11 @@ export default class MongooseActiveReservationRepository implements ActiveReserv
   public async save(reservation: ActiveReservation): Promise<void> {
     const instance = new this.Model(this.transformer.mongooseObjectFrom(reservation));
     await instance.save();
+  }
+
+  public async getByClientId(id: ClientId): Promise<ActiveReservation[]> {
+    const objects = await this.Model.find({clientId: id.toString()});
+    return objects.map((object) => this.transformer.domainInstanceFrom(object));
   }
 
   public getModel(): mongoose.Model<IActiveReservation & mongoose.Document> {

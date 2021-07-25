@@ -23,9 +23,14 @@ import ReservationController from "@app/Command/Presentation/Api/Controller/Rese
 import QueueServerController from "@app/Command/Presentation/Api/Controller/QueueServerController";
 import MetadataEntryMongooseTransformer
   from "@app/Command/Infrastructure/Mongoose/Transformer/MetadataEntryMongooseTransformer";
+import EventHandler from "@app/Command/Infrastructure/Service/EventHandler";
+import DummyEventBus from "@app/Command/Infrastructure/Service/DummyEventBus";
+import RabbitMQEventBus from "@app/Command/Infrastructure/Service/RabbitMQEventBus";
+import EventMap from "@app/Command/Infrastructure/Service/EventHandler/EventMap";
 
 export enum DiEntry {
   MONGOOSE_CONNECTION,
+  RABBIT_MQ_URL,
   ActiveReservationRepository,
   QueueServerOperatorRepository,
   QueueServerRepository,
@@ -46,6 +51,8 @@ export enum DiEntry {
   ReservationController,
   QueueServerController,
   MetadataEntryMongooseTransformer,
+  EventHandler,
+  EventBus,
 }
 
 const definitions: DependencyDefinitions<DiEntry> = {
@@ -58,6 +65,7 @@ const definitions: DependencyDefinitions<DiEntry> = {
       poolSize: 100,
     });
   },
+  [DiEntry.RABBIT_MQ_URL]: () => process.env.RABBIT_MQ_URL,
   [DiEntry.ActiveReservationRepository]: (container) =>
     new MongooseActiveReservationRepository(
       container.resolve(DiEntry.MONGOOSE_CONNECTION),
@@ -123,6 +131,20 @@ const definitions: DependencyDefinitions<DiEntry> = {
       container.resolve(DiEntry.MarkQueueServerAsFreeService),
     ),
   [DiEntry.MetadataEntryMongooseTransformer]: () => new MetadataEntryMongooseTransformer(),
+  [DiEntry.EventBus]: async (container) => {
+    if (process.env.ENV === "testing") {
+      return new DummyEventBus();
+    }
+    const bus = new RabbitMQEventBus(container.resolve(DiEntry.RABBIT_MQ_URL));
+    try {
+      await bus.waitForConnection();
+    } catch (e) {
+      console.error("EventBus is not available (Timeout)");
+      return new DummyEventBus();
+    }
+    return bus;
+  },
+  [DiEntry.EventHandler]: (container) => new EventHandler(container.resolve(DiEntry.EventBus), EventMap),
 };
 
 export default definitions;
