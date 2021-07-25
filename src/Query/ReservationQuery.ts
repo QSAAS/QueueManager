@@ -17,7 +17,7 @@ export default async function createReservationQueryRouter() {
       response.status(400).json({
         error: "Missing required parameter clientId",
       });
-    } else if (typeof (clientId) != "string") {
+    } else if (typeof (clientId) !== "string") {
       response.status(400).json({
         error: "clientId must be a string",
       });

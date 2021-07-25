@@ -15,7 +15,7 @@ export default async function createQueueServerOperatorRouter() {
       response.status(400).json({
         error: "Missing required parameter queueServerOperatorId",
       }).json();
-    } else if (typeof (queueServerOperatorId) != "string") {
+    } else if (typeof (queueServerOperatorId) !== "string") {
       response.status(400).json({
         error: "queueServerOperatorId must be a string",
       }).json();
