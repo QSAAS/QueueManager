@@ -39,6 +39,10 @@ import QueueAllocatorBecameFreeServiceListener
   from "@app/Command/Application/EventListener/QueueAllocatorBecameFreeServiceListener";
 import getEventMap from "@app/Command/Infrastructure/Service/EventHandler/EventMap";
 import ApplyNewAuthorizationRule from "@app/Command/Application/EventListener/ApplyNewAuthorizationRule";
+import UpdateQueueNodeStatsListener from "@app/Command/Application/EventListener/UpdateQueueNodeStatsListener";
+import MongooseQueueNodeStatsRepository
+  from "@app/Command/Infrastructure/Mongoose/Repository/MongooseQueueNodeStatsRepository";
+import QueueNodeStatsTransformer from "@app/Command/Infrastructure/Mongoose/Transformer/QueueNodeStatsTransformer";
 
 export enum DiEntry {
   MONGOOSE_CONNECTION,
@@ -67,6 +71,9 @@ export enum DiEntry {
   EventBus,
   QueueAllocatorBecameFreeServiceListener,
   ApplyNewAuthorizationRule,
+  UpdateQueueNodeStatsListener,
+  QueueNodeStatsRepository,
+  QueueNodeStatsTransformer,
 }
 
 const definitions: DependencyDefinitions<DiEntry> = {
@@ -167,7 +174,17 @@ const definitions: DependencyDefinitions<DiEntry> = {
   ),
   [DiEntry.ApplyNewAuthorizationRule]: (container) => new ApplyNewAuthorizationRule(
     container.resolve(DiEntry.QueueServerOperatorRepository)
-  )
+  ),
+  [DiEntry.UpdateQueueNodeStatsListener]: (container) =>
+    new UpdateQueueNodeStatsListener(
+    container.resolve(DiEntry.QueueNodeStatsRepository)
+  ),
+  [DiEntry.QueueNodeStatsRepository]: (container) =>
+    new MongooseQueueNodeStatsRepository(
+      container.resolve(DiEntry.MONGOOSE_CONNECTION),
+      container.resolve(DiEntry.QueueNodeStatsTransformer),
+  ),
+  [DiEntry.QueueNodeStatsTransformer]: () => new QueueNodeStatsTransformer(),
 }
 ;
 

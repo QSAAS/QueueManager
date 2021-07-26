@@ -10,7 +10,9 @@ export default class ActiveQueueServer {
 
   public assign(reservation: ActiveReservation): void {
     if (this.reservation !== null) throw new ActiveQueueServerIsBusy();
-    this.reservation = new InServiceReservation(reservation.getId(), new Date());
+    this.reservation = new InServiceReservation(reservation.getId(),
+      new Date(),
+      reservation.getQueueNodeId());
   }
 
   public getId(): QueueServerId {
@@ -25,6 +27,7 @@ export default class ActiveQueueServer {
     if (this.reservation === null) throw new ActiveQueueServerIsFree();
     const completeReservation = new CompleteReservation(
       this.reservation.getId(),
+      this.reservation.getQueueNodeId(),
       this.reservation.getServiceStartTime(),
       new Date(),
     );
