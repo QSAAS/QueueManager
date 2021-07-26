@@ -14,9 +14,6 @@ interface AuthorizationRuleCreated extends IncomingEvent {
         resourceType: string,
         action: string
       },
-      name: string,
-      passwordHash: { passwordHash: string },
-      username: { username: string }
     }
   }
 }

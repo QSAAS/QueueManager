@@ -15,7 +15,7 @@ function getEventMap(container: DependencyInjectionContainer<DiEntry>): { [key: 
     QueueServerCreated: [
       container.resolve(DiEntry.SaveQueueServerService)
     ],
-    QueueServerOperatorCreated: [
+    OrganizationEmployeeCreated: [
       container.resolve(DiEntry.SaveQueueServerOperatorService)
     ],
     AuthorizationRuleCreated: [
