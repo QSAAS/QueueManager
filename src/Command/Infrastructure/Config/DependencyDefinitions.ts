@@ -35,10 +35,10 @@ import MetadataEntryMongooseTransformer
 import EventHandler from "@app/Command/Infrastructure/Service/EventHandler";
 import DummyEventBus from "@app/Command/Infrastructure/Service/DummyEventBus";
 import RabbitMQEventBus from "@app/Command/Infrastructure/Service/RabbitMQEventBus";
-import EventMap from "@app/Command/Infrastructure/Service/EventHandler/EventMap";
 import QueueAllocatorBecameFreeServiceListener
   from "@app/Command/Application/EventListener/QueueAllocatorBecameFreeServiceListener";
 import getEventMap from "@app/Command/Infrastructure/Service/EventHandler/EventMap";
+import ApplyNewAuthorizationRule from "@app/Command/Application/EventListener/ApplyNewAuthorizationRule";
 
 export enum DiEntry {
   MONGOOSE_CONNECTION,
@@ -66,6 +66,7 @@ export enum DiEntry {
   EventHandler,
   EventBus,
   QueueAllocatorBecameFreeServiceListener,
+  ApplyNewAuthorizationRule,
 }
 
 const definitions: DependencyDefinitions<DiEntry> = {
@@ -164,6 +165,9 @@ const definitions: DependencyDefinitions<DiEntry> = {
     container.resolve(DiEntry.QueueServerRepository),
     container.resolve(DiEntry.ActiveReservationRepository),
   ),
+  [DiEntry.ApplyNewAuthorizationRule]: (container) => new ApplyNewAuthorizationRule(
+    container.resolve(DiEntry.QueueServerOperatorRepository)
+  )
 }
 ;
 
