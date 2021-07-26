@@ -86,4 +86,13 @@ export default class QueueServerOperator extends AggregateRoot {
     if (!activeServer) throw new QueueServerIsInactive();
     return activeServer;
   }
+
+  addAssignedQueueNodeId(id: QueueNodeId) {
+    this.assignedQueueNodeIds.push(id);
+  }
+
+  addAssignedQueueServerId(id: QueueServerId) {
+    this.assignedQueueServerIds.push(id);
+
+  }
 }

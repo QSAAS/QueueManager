@@ -3,7 +3,7 @@ import {DiEntry} from "@app/Command/Infrastructure/Config/DependencyDefinitions"
 import MongooseQueueServerOperatorRepository
   from "@app/Command/Infrastructure/Mongoose/Repository/MongooseQueueServerOperatorRepository";
 import {getDependencyContainer} from "@app/Command/Presentation/Api/Routes/Router";
-import SaveQueueServerOperatorService from "@app/Command/Application/Service/SaveQueueServerOperatorService";
+import SaveQueueServerOperatorService from "@app/Command/Application/EventListener/SaveQueueServerOperatorService";
 import QueueServerOperator from "@app/Command/Domain/Entity/QueueServerOperator";
 import QueueServerOperatorId from "@app/Command/Domain/ValueObject/QueueServerOperatorId";
 import QueueServerOperatorSaved from "@app/Command/Domain/Event/QueueServerOperatorSaved";

@@ -1,24 +1,33 @@
 /* eslint-disable @typescript-eslint/no-shadow,max-classes-per-file */
 import mongoose from "mongoose";
 import { DependencyDefinitions } from "@app/Command/Infrastructure/Config/DependencyInjectionContainer";
-import MongooseActiveReservationRepository from "@app/Command/Infrastructure/Mongoose/Repository/MongooseActiveReservationRepository";
-import MongooseQueueServerOperatorRepository from "@app/Command/Infrastructure/Mongoose/Repository/MongooseQueueServerOperatorRepository";
-import QueueServerOperatorMongooseTransformer from "@app/Command/Infrastructure/Mongoose/Transformer/QueueServerOperatorMongooseTransformer";
-import MongooseQueueServerRepository from "@app/Command/Infrastructure/Mongoose/Repository/MongooseQueueServerRepository";
-import ActiveQueueServerMongooseTransformer from "@app/Command/Infrastructure/Mongoose/Transformer/ActiveQueueServerMongooseTransformer";
-import ActiveReservationMongooseTransformer from "@app/Command/Infrastructure/Mongoose/Transformer/ActiveReservationMongooseTransformer";
-import InServiceRegistrationMongooseTransformer from "@app/Command/Infrastructure/Mongoose/Transformer/InServiceRegistrationMongooseTransformer";
+import MongooseActiveReservationRepository
+  from "@app/Command/Infrastructure/Mongoose/Repository/MongooseActiveReservationRepository";
+import MongooseQueueServerOperatorRepository
+  from "@app/Command/Infrastructure/Mongoose/Repository/MongooseQueueServerOperatorRepository";
+import QueueServerOperatorMongooseTransformer
+  from "@app/Command/Infrastructure/Mongoose/Transformer/QueueServerOperatorMongooseTransformer";
+import MongooseQueueServerRepository
+  from "@app/Command/Infrastructure/Mongoose/Repository/MongooseQueueServerRepository";
+import ActiveQueueServerMongooseTransformer
+  from "@app/Command/Infrastructure/Mongoose/Transformer/ActiveQueueServerMongooseTransformer";
+import ActiveReservationMongooseTransformer
+  from "@app/Command/Infrastructure/Mongoose/Transformer/ActiveReservationMongooseTransformer";
+import InServiceRegistrationMongooseTransformer
+  from "@app/Command/Infrastructure/Mongoose/Transformer/InServiceRegistrationMongooseTransformer";
 import MetadataMongooseTransformer from "@app/Command/Infrastructure/Mongoose/Transformer/MetadataMongooseTransformer";
-import QueueServerMongooseTransformer from "@app/Command/Infrastructure/Mongoose/Transformer/QueueServerMongooseTransformer";
-import ArbitraryQueueServerAllocatorService from "@app/Command/Infrastructure/Service/ArbitraryQueueServerAllocatorService";
+import QueueServerMongooseTransformer
+  from "@app/Command/Infrastructure/Mongoose/Transformer/QueueServerMongooseTransformer";
+import ArbitraryQueueServerAllocatorService
+  from "@app/Command/Infrastructure/Service/ArbitraryQueueServerAllocatorService";
 import FIFOReservationQueue from "@app/Command/Infrastructure/Service/FIFOReservationQueue";
 import CancelReservationService from "@app/Command/Application/Service/CancelReservationService";
 import ClientCancelReservationService from "@app/Command/Domain/Service/ClientCancelReservationService";
 import ChangeQueueServerStatusService from "@app/Command/Application/Service/ChangeQueueServerStatusService";
 import MarkQueueServerAsFreeService from "@app/Command/Application/Service/MarkQueueServerAsFreeService";
-import QueueAllocatorServiceListener from "@app/Command/Application/Service/QueueAllocatorServiceListener";
-import SaveQueueServerOperatorService from "@app/Command/Application/Service/SaveQueueServerOperatorService";
-import SaveQueueServerService from "@app/Command/Application/Service/SaveQueueServerService";
+import QueueAllocatorServiceListener from "@app/Command/Application/EventListener/QueueAllocatorServiceListener";
+import SaveQueueServerOperatorService from "@app/Command/Application/EventListener/SaveQueueServerOperatorService";
+import SaveQueueServerService from "@app/Command/Application/EventListener/SaveQueueServerService";
 import ReservationController from "@app/Command/Presentation/Api/Controller/ReservationController";
 import QueueServerController from "@app/Command/Presentation/Api/Controller/QueueServerController";
 import MetadataEntryMongooseTransformer
@@ -27,6 +36,9 @@ import EventHandler from "@app/Command/Infrastructure/Service/EventHandler";
 import DummyEventBus from "@app/Command/Infrastructure/Service/DummyEventBus";
 import RabbitMQEventBus from "@app/Command/Infrastructure/Service/RabbitMQEventBus";
 import EventMap from "@app/Command/Infrastructure/Service/EventHandler/EventMap";
+import QueueAllocatorBecameFreeServiceListener
+  from "@app/Command/Application/EventListener/QueueAllocatorBecameFreeServiceListener";
+import getEventMap from "@app/Command/Infrastructure/Service/EventHandler/EventMap";
 
 export enum DiEntry {
   MONGOOSE_CONNECTION,
@@ -53,6 +65,7 @@ export enum DiEntry {
   MetadataEntryMongooseTransformer,
   EventHandler,
   EventBus,
+  QueueAllocatorBecameFreeServiceListener,
 }
 
 const definitions: DependencyDefinitions<DiEntry> = {
@@ -144,7 +157,14 @@ const definitions: DependencyDefinitions<DiEntry> = {
     }
     return bus;
   },
-  [DiEntry.EventHandler]: (container) => new EventHandler(container.resolve(DiEntry.EventBus), EventMap),
-};
+  [DiEntry.EventHandler]: async (container) => new EventHandler(container.resolve(DiEntry.EventBus), await getEventMap(container)),
+  [DiEntry.QueueAllocatorBecameFreeServiceListener]: (container) => new QueueAllocatorBecameFreeServiceListener(
+    container.resolve(DiEntry.QueueServerOperatorRepository),
+    container.resolve(DiEntry.QueueServerAllocatorService),
+    container.resolve(DiEntry.QueueServerRepository),
+    container.resolve(DiEntry.ActiveReservationRepository),
+  ),
+}
+;
 
 export default definitions;

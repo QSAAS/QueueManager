@@ -2,7 +2,7 @@ import DependencyInjectionContainer from "@app/Command/Infrastructure/Config/Dep
 import {DiEntry} from "@app/Command/Infrastructure/Config/DependencyDefinitions";
 import MongooseQueueServerRepository
   from "@app/Command/Infrastructure/Mongoose/Repository/MongooseQueueServerRepository";
-import SaveQueueServerService from "@app/Command/Application/Service/SaveQueueServerService";
+import SaveQueueServerService from "@app/Command/Application/EventListener/SaveQueueServerService";
 import {getDependencyContainer} from "@app/Command/Presentation/Api/Routes/Router";
 import QueueServerSaved from "@app/Command/Domain/Event/QueueServerSaved";
 import QueueServer from "@app/Command/Domain/Entity/QueueServer";

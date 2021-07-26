@@ -16,7 +16,7 @@ import VerificationNumber from "@app/Command/Domain/ValueObject/VerificationNumb
 import ClientId from "@app/Command/Domain/ValueObject/ClientId";
 import QueueServerId from "@app/Command/Domain/ValueObject/QueueServerId";
 import QueueServerOperatorId from "@app/Command/Domain/ValueObject/QueueServerOperatorId";
-import QueueAllocatorServiceListener from "@app/Command/Application/Service/QueueAllocatorServiceListener";
+import QueueAllocatorServiceListener from "@app/Command/Application/EventListener/QueueAllocatorServiceListener";
 import NewReservationCreated from "@app/Command/Domain/Event/NewReservationCreated";
 import QueueServerBecameFree from "@app/Command/Domain/Event/QueueServerBecameFree";
 import QueueServer from "@app/Command/Domain/Entity/QueueServer";
