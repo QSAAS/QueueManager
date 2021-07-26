@@ -20,7 +20,10 @@ function getEventMap(container: DependencyInjectionContainer<DiEntry>): { [key: 
     ],
     AuthorizationRuleCreated: [
       container.resolve(DiEntry.ApplyNewAuthorizationRule)
-    ]
+    ],
+    ReservationCompleted: [
+      container.resolve(DiEntry.UpdateQueueNodeStatsListener)
+    ],
   }
 }
 
