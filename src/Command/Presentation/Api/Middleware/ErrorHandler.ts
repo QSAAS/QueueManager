@@ -24,7 +24,7 @@ const ErrorHandler: ErrorRequestHandler = (err, request, response, next) => {
     });
   } else if (err instanceof QueueServerOperatorNotFound) {
     response.status(404).json({
-      message: "Queue server not found",
+      message: "Queue server operator not found",
     });
   } else if (err instanceof QueueServerNotFound) {
     response.status(404).json({
