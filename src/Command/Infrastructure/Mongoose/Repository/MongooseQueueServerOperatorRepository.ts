@@ -22,7 +22,7 @@ export default class MongooseQueueServerOperatorRepository implements QueueServe
   }
 
   public async getById(id: QueueServerOperatorId): Promise<QueueServerOperator> {
-    const object = await this.Model.findOne({ id: id.toString() }).lean();
+    const object = await this.Model.findOne({ id: id.toString() });
 
     if (!object) throw new QueueServerOperatorNotFound();
 
