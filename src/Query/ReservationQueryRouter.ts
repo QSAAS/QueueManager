@@ -4,6 +4,7 @@ import MongooseActiveReservationRepository
 import {DiEntry} from "@app/Command/Infrastructure/Config/DependencyDefinitions";
 import DependencyInjectionContainer from "@app/Command/Infrastructure/Config/DependencyInjectionContainer";
 import QueueServerOperatorId from "@app/Command/Domain/ValueObject/QueueServerOperatorId";
+import IActiveReservation from "@app/Command/Infrastructure/Mongoose/Types/IActiveReservation";
 
 export default async function createReservationQueryRouter(container: DependencyInjectionContainer<DiEntry>) {
   const router = express.Router();
@@ -11,7 +12,12 @@ export default async function createReservationQueryRouter(container: Dependency
     .resolve<MongooseActiveReservationRepository>(DiEntry.ActiveReservationRepository);
 
   router.get("/", async (request, response) => {
-    const instances = await repo.getAll();
+    const filter: Partial<IActiveReservation> = {}
+    if (request.query.clientId && typeof request.query.clientId === "string")
+      filter.clientId = request.query.clientId;
+    if (request.query.queueNodeId && typeof request.query.queueNodeId === "string")
+      filter.queueNodeId = request.query.queueNodeId;
+    const instances = await repo.getAll(filter);
     const result = instances.map(d => repo.getTransformer().mongooseObjectFrom(d));
     response.json(result);
   });

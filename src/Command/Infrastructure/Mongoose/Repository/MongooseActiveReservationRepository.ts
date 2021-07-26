@@ -52,8 +52,9 @@ export default class MongooseActiveReservationRepository implements ActiveReserv
     return this.transformer;
   }
 
-  async getAll() {
-    const objects = await this.Model.find({});
+  async getAll(filter: Partial<IActiveReservation>) {
+    console.log(filter);
+    const objects = await this.Model.find(filter);
     return objects.map(o => this.transformer.domainInstanceFrom(o));
   }
 }
