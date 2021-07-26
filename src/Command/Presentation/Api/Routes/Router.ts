@@ -4,6 +4,7 @@ import express from "express";
 import ErrorHandler from "@app/Command/Presentation/Api/Middleware/ErrorHandler";
 import createReservationRouter from "@app/Command/Presentation/Api/Routes/ReservationRouter";
 import createQueueServerRouter from "@app/Command/Presentation/Api/Routes/QueueServerRouter";
+import createQueryRouter from "@app/Query/QueryRouter";
 
 let container: DependencyInjectionContainer<DiEntry>;
 
@@ -20,6 +21,7 @@ async function createRouter() {
   const containerInstance = await getDependencyContainer();
   router.use("/reservation", createReservationRouter(containerInstance));
   router.use("/server", createQueueServerRouter(containerInstance));
+  router.use("/query", await createQueryRouter(containerInstance))
   router.use(ErrorHandler);
 
   return router;
