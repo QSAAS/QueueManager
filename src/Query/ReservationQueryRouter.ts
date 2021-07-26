@@ -31,18 +31,18 @@ export default async function createReservationQueryRouter(container: Dependency
       const result = repo.getTransformer().mongooseObjectFrom(instance);
       const queueNodeStatsRepository = container
         .resolve<MongooseQueueNodeStatsRepository>(DiEntry.QueueNodeStatsRepository)
-      let expectedWaitingTime: number|null = null;
+      let averageServiceTime: number|null = null;
       try {
         const queueNodeStats = await queueNodeStatsRepository.getByQueueNodeId(instance.getQueueNodeId());
-        expectedWaitingTime = queueNodeStats.getAverageServingTime();
+        averageServiceTime = queueNodeStats.getAverageServingTime();
       } catch(e) {
         console.log(e);
       }
       response.json({
         ...result,
-        expectedWaitingTime: expectedWaitingTime === null ?
+        averageServiceTime: averageServiceTime === null ?
           "No data about this queue node available"
-          : expectedWaitingTime
+          : averageServiceTime
       });
     } catch(e) {
       console.log(e);
