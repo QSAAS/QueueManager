@@ -64,4 +64,13 @@ export default class MongooseQueueServerOperatorRepository implements QueueServe
   getModel() {
     return this.Model;
   }
+
+  getTransformer() {
+    return this.transformer;
+  }
+
+  async getAll() {
+    const objects = await this.Model.find({});
+    return objects.map(o => this.transformer.domainInstanceFrom(o));
+  }
 }
